@@ -16,7 +16,8 @@ class VerificationController extends Controller
     public function __construct(
         ResponseHelper $responseHelper
     ) {
-        $this->twilio = new Client(env("TWILIO_ACCOUNT_SID"), env("TWILIO_AUTH_TOKEN"));
+        $this->twilio = new Client(env("TWILIO_ACCOUNT_SID", "AC1e542184f426879f19c494343d1d25a6"), 
+        env("TWILIO_AUTH_TOKEN", "846d6e2cf7440097be3da08b289be2ba"));
         $this->responseHelper = $responseHelper;
     }
     public function verify($user_id, Request $request) {
@@ -51,6 +52,8 @@ class VerificationController extends Controller
             'phone' => 'required'
         ];
 
+       // $user = $request->user();
+        
         $validator = Validator::make($request->all(), $validation);
 
         // If request parameter have any error

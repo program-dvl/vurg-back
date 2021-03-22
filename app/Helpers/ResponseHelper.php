@@ -50,7 +50,7 @@ class ResponseHelper
         $response['status'] = $statusCode;
         $response['type'] = $statusType;
         $response['message'] = $customErrorMessage;
-        $data["errors"][] = $response;
+        $data["errors"] = $response;
 
         return response()->json($data, $statusCode, [], JSON_NUMERIC_CHECK);
     }

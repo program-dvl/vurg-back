@@ -10,6 +10,7 @@ use Illuminate\Http\Request;
 use Illuminate\Http\Response;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Auth;
 use Validator;
 
 class AuthController extends Controller
@@ -78,11 +79,52 @@ class AuthController extends Controller
 
         event(new Registered($user));
 
+        Auth::login($user);
+
         // Set response data
         $apiStatus = Response::HTTP_OK;
         $apiMessage = 'User created successfully.';
         $apiData = $user->toArray();
 
         return $this->responseHelper->success($apiStatus, $apiMessage, $apiData);
+    }
+
+    public function login(Request $request):JsonResponse
+    {
+        // Server side validations
+        $validation = [
+            'email' => 'required|exists:users,email,deleted_at,NULL',
+            'password' => 'required',
+        ];
+
+        $validator = Validator::make($request->all(), $validation);
+
+        // If request parameter have any error
+        if ($validator->fails()) {
+            return $this->responseHelper->error(
+                Response::HTTP_UNPROCESSABLE_ENTITY,
+                Response::$statusTexts[Response::HTTP_UNPROCESSABLE_ENTITY],
+                $validator->errors()->first()
+            );
+        }
+
+        $credentials = $request->only('email', 'password');
+
+        if (Auth::attempt($credentials)) {
+            $request->session()->regenerate();
+            
+            // Set response data
+            $apiStatus = Response::HTTP_OK;
+            $apiMessage = 'User logged in successfully.';
+            $apiData = [];
+
+            return $this->responseHelper->success($apiStatus, $apiMessage, $apiData);
+        }
+
+        // Set response data
+        $apiStatus = Response::HTTP_NOT_FOUND;
+        $apiMessage = 'The provided credentials do not match our records.';
+
+        return $this->responseHelper->success($apiStatus, $apiMessage);
     }
 }
