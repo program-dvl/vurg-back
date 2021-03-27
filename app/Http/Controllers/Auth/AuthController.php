@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Auth;
 use App\Helpers\ResponseHelper;
 use App\Http\Controllers\Controller;
 use App\Repositories\Auth\AuthRepository;
+use App\Repositories\User\UserRepository;
 use Illuminate\Auth\Events\Registered;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
@@ -33,27 +34,36 @@ class AuthController extends Controller
     private $authRepository;
 
     /**
+     * @var App\Repositories\User\UserRepository;
+     */
+    private $userRepository;
+
+    /**
      * Create a new controller instance.
      *
      * @param \Illuminate\Http\Request $request
      * @param Illuminate\Http\ResponseHelper $responseHelper
      * @param App\Repositories\Auth\AuthRepository $authRepository
+     * @param App\Repositories\User\UserRepository $userRepository
      * @return void
      */
     public function __construct(
         Request $request,
         ResponseHelper $responseHelper,
-        AuthRepository $authRepository
+        AuthRepository $authRepository,
+        UserRepository $userRepository
     ) {
         $this->request = $request;
         $this->responseHelper = $responseHelper;
         $this->authRepository = $authRepository;
+        $this->userRepository = $userRepository;
     }
 
     public function register(Request $request): JsonResponse
     {
         // Server side validations
         $validation = [
+            'name' => 'required',
             'email' => 'required|email|unique:users,email,NULL,deleted_at',
             'password' => 'required',
         ];
@@ -71,7 +81,8 @@ class AuthController extends Controller
         
         $requestData = [
             'password' => Hash::make($request->password),
-            'email' => $request->email
+            'email' => $request->email,
+            'name' => $request->name
         ];
 
         // Store user
@@ -94,7 +105,7 @@ class AuthController extends Controller
         // Server side validations
         $validation = [
             'email' => 'required|exists:users,email,deleted_at,NULL',
-            'password' => 'required',
+            'password' => 'required'
         ];
 
         $validator = Validator::make($request->all(), $validation);
@@ -109,14 +120,14 @@ class AuthController extends Controller
         }
 
         $credentials = $request->only('email', 'password');
-
+        
         if (Auth::attempt($credentials)) {
             $request->session()->regenerate();
-            
+            $user = $this->userRepository->userDetailsByEmail($request->email);
             // Set response data
             $apiStatus = Response::HTTP_OK;
             $apiMessage = 'User logged in successfully.';
-            $apiData = [];
+            $apiData = $user->toArray();
 
             return $this->responseHelper->success($apiStatus, $apiMessage, $apiData);
         }

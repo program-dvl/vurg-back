@@ -20,18 +20,19 @@ class VerificationController extends Controller
         env("TWILIO_AUTH_TOKEN", "846d6e2cf7440097be3da08b289be2ba"));
         $this->responseHelper = $responseHelper;
     }
+    
     public function verify($user_id, Request $request) {
         if (!$request->hasValidSignature()) {
             return response()->json(["msg" => "Invalid/Expired url provided."], 401);
         }
     
         $user = User::findOrFail($user_id);
-    
+        
         if (!$user->hasVerifiedEmail()) {
             $user->markEmailAsVerified();
         }
     
-        return redirect()->to('/');
+        return redirect()->to(config('site.SPA_URL').'dashboard');
     }
     
     public function resend() {

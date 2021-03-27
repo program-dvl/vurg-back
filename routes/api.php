@@ -19,8 +19,9 @@ use Illuminate\Support\Facades\Route;
 // });
 Route::post('login', 'App\Http\Controllers\Auth\AuthController@login');
 Route::post('register', 'App\Http\Controllers\Auth\AuthController@register');
-Route::group(['middleware' => ['auth:sanctum']], function () {
-    Route::get('email/verify/{id}', 'App\Http\Controllers\Auth\VerificationController@verify')->name('verification.verify');
+Route::get('email/verify/{id}', 'App\Http\Controllers\Auth\VerificationController@verify')->name('verification.verify');
+Route::middleware(['auth:sanctum'])->group(function () {
+    // Route::get('user', 'App\Http\Controllers\User\UserController@index');
     Route::get('email/resend', 'App\Http\Controllers\Auth\VerificationController@resend')->name('verification.resend');
     Route::post('otp/send', 'App\Http\Controllers\Auth\VerificationController@sendOTP')->name('verify.otp');
     Route::post('otp/verify', 'App\Http\Controllers\Auth\VerificationController@verifyOTP')->name('verify.otp');
