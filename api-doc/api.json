@@ -1,0 +1,248 @@
+{
+  "swagger": "2.0",
+  "info": {
+    "version": "",
+    "title": "Vurg Platform",
+    "description": "Peer to peer market place for cryptocurrencies"
+  },
+  "host": "api.vurg.com",
+  "basePath": "/api/",
+  "tags": [
+    {
+      "name": "Authentication"
+    },
+    {
+      "name": "User Verification"
+    }
+  ],
+  "paths":{
+    "login": {
+      "post": {
+        "operationId": "POST-vurg-customer-login",
+        "summary": "User Login API",
+        "tags": [
+          "Authentication"
+        ],
+        "consumes": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "type": "object",
+              "properties": {
+                "email": {
+                  "type": "string",
+                  "example": "dhaval@vurg.com"
+                },
+                "password": {
+                  "type": "string",
+                  "example": "12345678"
+                }
+              }
+            }
+          }
+        ],
+        "responses": {
+          "400": {
+            "description": "Bad Request"
+          },
+          "422": {
+            "description": "Invalid input"
+          }
+        }
+      }
+    },
+    "register": {
+      "post": {
+        "operationId": "POST-vurg-customer-register",
+        "summary": "User registration API",
+        "tags": [
+          "Authentication"
+        ],
+        "consumes": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "type": "object",
+              "properties": {
+                "name": {
+                  "type": "string",
+                  "example": "dhaval p"
+                },
+                "email": {
+                  "type": "string",
+                  "example": "dhaval@vurg.com"
+                },
+                "password": {
+                  "type": "string",
+                  "example": "12345678"
+                }
+              }
+            }
+          }
+        ],
+        "responses": {
+          "400": {
+            "description": "Bad Request"
+          },
+          "422": {
+            "description": "Invalid input"
+          }
+        }
+      }
+    },
+    "email/verify/{id}": {
+      "get": {
+        "operationId": "POST-vurg-customer-email-verification",
+        "summary": "User email verification API",
+        "tags": [
+          "User Verification"
+        ],
+        "consumes": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "description": "verification id",
+            "required": true,
+            "type": "string",
+          }
+        ],
+        "responses": {
+          "400": {
+            "description": "Bad Request"
+          },
+          "422": {
+            "description": "Invalid input"
+          }
+        }
+      }
+    },
+    "email/resend": {
+      "get": {
+        "operationId": "POST-vurg-customer-varifcation-email-resend",
+        "summary": "Verification email resend",
+        "tags": [
+          "User Verification"
+        ],
+        "consumes": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "name": "Authorization",
+            "in": "header",
+            "required": true,
+            "type": "string",
+            "default": ""
+          },
+          {
+            "name": "id",
+            "in": "path",
+            "description": "verification id",
+            "required": true,
+            "type": "string",
+          }
+        ],
+        "responses": {
+          "400": {
+            "description": "Bad Request"
+          },
+          "422": {
+            "description": "Invalid input"
+          }
+        }
+      }
+    },
+    "otp/send": {
+      "post": {
+        "operationId": "POST-vurg-otp-send",
+        "summary": "Send otp on user's mobile API",
+        "tags": [
+          "User Verification"
+        ],
+        "consumes": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "type": "object",
+              "properties": {
+                "phone": {
+                  "type": "string",
+                  "example": "+912547856541"
+                }
+              }
+            }
+          }
+        ],
+        "responses": {
+          "400": {
+            "description": "Bad Request"
+          },
+          "422": {
+            "description": "Invalid input"
+          }
+        }
+      }
+    },
+    "otp/verify": {
+      "post": {
+        "operationId": "POST-vurg-otp-verify",
+        "summary": "Verify otp on user's mobile number API",
+        "tags": [
+          "User Verification"
+        ],
+        "consumes": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "type": "object",
+              "properties": {
+                "phone": {
+                  "type": "string",
+                  "example": "+912547856541"
+                },
+                "code": {
+                  "type": "string",
+                  "example": "854785"
+                }
+              }
+            }
+          }
+        ],
+        "responses": {
+          "400": {
+            "description": "Bad Request"
+          },
+          "422": {
+            "description": "Invalid input"
+          }
+        }
+      }
+    }
+  },
+  "definitions": {
+    
+  }
+}
