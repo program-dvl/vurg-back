@@ -13,6 +13,9 @@
     },
     {
       "name": "User Verification"
+    },
+    {
+      "name": "User Settings"
     }
   ],
   "paths":{
@@ -226,6 +229,236 @@
                 "code": {
                   "type": "string",
                   "example": "854785"
+                }
+              }
+            }
+          }
+        ],
+        "responses": {
+          "400": {
+            "description": "Bad Request"
+          },
+          "422": {
+            "description": "Invalid input"
+          }
+        }
+      }
+    },
+    "upload/avatar": {
+      "post": {
+        "operationId": "POST-upload-avatar",
+        "summary": "Upload User avatar from user settings",
+        "tags": [
+          "User Settings"
+        ],
+        "consumes": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "type": "object",
+              "properties": {
+                "profile_pic": {
+                  "type": "multipart form data",
+                  "example": ""
+                }
+              }
+            }
+          }
+        ],
+        "responses": {
+          "400": {
+            "description": "Bad Request"
+          },
+          "422": {
+            "description": "Invalid input"
+          },
+          "501":{
+            "description": "Invalid file format"
+          }
+        }
+      }
+    },
+    "remove/avatar": {
+      "get": {
+        "operationId": "POST-remove-user-avatar",
+        "summary": "Remove user avatar",
+        "tags": [
+          "User Settings"
+        ],
+        "consumes": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "name": "Authorization",
+            "in": "header",
+            "required": true,
+            "type": "string",
+            "default": ""
+          }
+        ],
+        "responses": {
+          "400": {
+            "description": "Bad Request"
+          },
+          "422": {
+            "description": "Invalid input"
+          },
+          "501": {
+            "description": "User not found"
+          }
+        }
+      }
+    },
+    "username/update": {
+      "post": {
+        "operationId": "POST-change-username",
+        "summary": "Change user name",
+        "tags": [
+          "User Settings"
+        ],
+        "consumes": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "type": "object",
+              "properties": {
+                "username": {
+                  "type": "string",
+                  "example": "loremipsum"
+                }
+              }
+            }
+          }
+        ],
+        "responses": {
+          "400": {
+            "description": "Bad Request"
+          },
+          "422": {
+            "description": "Invalid input"
+          },
+          "501":{
+            "description": "You can only change username one time only"
+          }
+        }
+      }
+    },
+    "get/timezones": {
+      "get": {
+        "operationId": "GET-Timezone",
+        "summary": "Get all timezones",
+        "tags": [
+          "User Settings"
+        ],
+        "consumes": [
+          "application/json"
+        ],
+        "responses": {
+          "400": {
+            "description": "Bad Request"
+          }
+        }
+      }
+    },
+    "get/currencies": {
+      "get": {
+        "operationId": "GET-currencies",
+        "summary": "Get all currencies",
+        "tags": [
+          "User Settings"
+        ],
+        "consumes": [
+          "application/json"
+        ],
+        "responses": {
+          "400": {
+            "description": "Bad Request"
+          }
+        }
+      }
+    },
+    "get/countries": {
+      "get": {
+        "operationId": "GET-countries",
+        "summary": "Get all countries & country code for phone number",
+        "tags": [
+          "User Settings"
+        ],
+        "consumes": [
+          "application/json"
+        ],
+        "responses": {
+          "400": {
+            "description": "Bad Request"
+          }
+        }
+      }
+    },
+    "get/settings": {
+      "get": {
+        "operationId": "GET-settings",
+        "summary": "Get all setting list",
+        "tags": [
+          "User Settings"
+        ],
+        "consumes": [
+          "application/json"
+        ],
+        "responses": {
+          "400": {
+            "description": "Bad Request"
+          }
+        }
+      }
+    },
+    "profile/update": {
+      "post": {
+        "operationId": "POST-update-user-profile",
+        "summary": "Update user profile",
+        "tags": [
+          "User Settings"
+        ],
+        "consumes": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "type": "object",
+              "properties": {
+                "display_name": {
+                  "type": "integer",
+                  "example": "1:Firstname and initial, 2: Full name, 3: Hide full name"
+                },
+                "bio": {
+                  "type": "text",
+                  "example": "I am trader since 2000"
+                },
+                "preferred_currency": {
+                  "type": "interger",
+                  "example": "5"
+                },
+                "user_timezone": {
+                  "type": "interger",
+                  "example": "2"
+                },
+                "settings": {
+                  "type": "array",
+                  "example": "[{setting_id:2,web:1,email:0,other_setting:0}, {setting_id:3,web:0,email:0,other_setting:0}]"
                 }
               }
             }

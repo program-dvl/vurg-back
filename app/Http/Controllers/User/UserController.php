@@ -9,7 +9,11 @@ use Illuminate\Auth\Events\Registered;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
 use Illuminate\Http\JsonResponse;
+use Illuminate\Support\Facades\Auth;
+use App\Models\User;
+use App\Models\UserSettings;
 use Validator;
+use File;
 
 class UserController extends Controller
 {
@@ -61,4 +65,154 @@ class UserController extends Controller
         return $this->responseHelper->success($apiStatus, $apiMessage, $apiData);
     }
 
+    public function uploadAvatar(Request $request)
+    {
+        try {
+            $validator = Validator::make($request->all(), [
+                'profile_pic' => 'required|image|mimes:jpeg,png,jpg,gif,svg,JPG,JPEG,PNG',
+            ]);
+    
+            if ($validator->fails()) {
+                return $this->sendValidationError($validator->messages());
+            }
+    
+            $image = $request->file('profile_pic');
+            $input['imagename'] = time().'.'.$image->getClientOriginalExtension();
+            $destinationPath = public_path('/user_profile');
+            $image->move($destinationPath, $input['imagename']);
+    
+            $userDetails = User::find(Auth::id());
+    
+            if(!empty($userDetails)) {
+                if(!empty($userDetails->avatar_url)) {
+                    $imagePath = public_path('/user_profile') . "/" .$userDetails->avatar_url;
+                    if(File::exists($imagePath)){
+                        unlink($imagePath);
+                    }    
+                }
+                User::where('id' , Auth::id())->update(['avatar_url' => $input['imagename']]);
+                $imageUrl = public_path('/user_profile') . '/' .$input['imagename'];
+                return $this->sendSuccess($imageUrl, 'Avatar Image uploaded successfully');
+            }
+        } catch (\Exception $e) {
+            return $this->sendError();
+        }        
+    }
+
+    public function removeAvatar(Request $request)
+    {
+        try {
+            $userDetails = User::find(Auth::id());
+
+            if(empty($userDetails)) {
+                return $this->sendError("User details not found");
+            }
+    
+            if(!empty($userDetails)) {
+                if(!empty($userDetails->avatar_url)) {
+                    $imagePath = public_path('/user_profile') . "/" .$userDetails->avatar_url;
+                    if(File::exists($imagePath)){
+                        unlink($imagePath);
+                        User::where('id' , Auth::id())->update(['avatar_url' => null]);
+                    }
+                }
+                return $this->sendSuccess(array(), 'Avatar Image removed successfully');
+            }
+        } catch (\Exception $e) {
+            return $this->sendError();
+        }        
+    }
+
+    public function changeUsername(Request $request)
+    {
+        try {
+            $validator = Validator::make($request->all(), [
+                'username' => 'required',
+            ]);
+    
+            if ($validator->fails()) {
+                return $this->sendValidationError($validator->messages());
+            }
+
+            $input = $request->all();            
+            $userDetails = User::find(Auth::id());
+
+            if(empty($userDetails)) {
+                return $this->sendError("User details not found");
+            }
+
+            if($userDetails->is_username_changed == 1) {
+                return $this->sendError("You can only change username one time only.");
+            }
+
+            if($userDetails->username == $input['username']) {
+                return $this->sendError("This is same as your current username. Add new username.");
+            }
+    
+            if(!empty($userDetails)) {
+                if(!empty($userDetails->username)) {
+                    $isOtherUserExist = User::where('username', $input['username'])->count();
+
+                    if($isOtherUserExist > 0) {
+                        return $this->sendError("Username already exist.");
+                    }
+
+                    User::where('id' , Auth::id())->update(['username' => $input['username'], 'is_username_changed' => 1]);
+                }
+                return $this->sendSuccess(User::find(Auth::id()), 'Username changed sucessfully');
+            }
+        } catch (\Exception $e) {
+            return $this->sendError();
+        }        
+    }
+
+    public function updateProfile(Request $request)
+    {
+        try {
+            $validator = Validator::make($request->all(), [
+                'display_name' => 'required',
+                'bio' => 'required',
+                'preferred_currency' => 'required',
+                'user_timezone' => 'required',
+            ]);
+
+            if ($validator->fails()) {
+                return $this->sendValidationError($validator->messages());
+            }
+
+            $input = $request->all();            
+            $userDetails = User::find(Auth::id());
+
+            if(empty($userDetails)) {
+                return $this->sendError("User details not found");
+            }
+
+            $dataUpdate = [
+                'bio' => !empty($input['bio']) ? $input['bio'] : '',
+                'preferred_currency' => !empty($input['preferred_currency']) ? $input['preferred_currency'] : null,
+                'timezone' => !empty($input['user_timezone']) ? $input['user_timezone'] : null,
+                'display_name' => !empty($input['display_name']) ? $input['display_name'] : 1,
+            ];
+
+            User::where('id', Auth::id())->update($dataUpdate);
+            
+            if(!empty($input['settings'])) {
+                foreach($input['settings'] as $setting) {
+                    
+                    UserSettings::updateOrCreate([
+                        'setting_id' => $setting['setting_id'],
+                        'user_id' => Auth::id(),
+                    ],[
+                        'web' => $setting['web'],
+                        'email' => $setting['email'],
+                        'other_setting' => $setting['other_setting']
+                    ]);
+                }
+            }
+            
+            return $this->sendSuccess(User::find(Auth::id()), 'Profile updated sucessfully');
+        } catch (\Exception $e) {
+            return $this->sendError();
+        }        
+    }
 }

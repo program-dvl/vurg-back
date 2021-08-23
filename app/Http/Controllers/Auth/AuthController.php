@@ -66,6 +66,7 @@ class AuthController extends Controller
             'name' => 'required',
             'email' => 'required|email|unique:users,email,NULL,deleted_at',
             'password' => 'required',
+            'username' => 'required|unique:users',
         ];
 
         $validator = Validator::make($request->all(), $validation);
@@ -82,7 +83,8 @@ class AuthController extends Controller
         $requestData = [
             'password' => Hash::make($request->password),
             'email' => $request->email,
-            'name' => $request->name
+            'name' => $request->name,
+            'username' => substr(str_replace(' ','',strtolower($request->name)), 0, 5).rand(1,100000)
         ];
 
         // Store user
@@ -101,7 +103,7 @@ class AuthController extends Controller
     }
 
     public function login(Request $request):JsonResponse
-    {
+    {        
         // Server side validations
         $validation = [
             'email' => 'required|exists:users,email,deleted_at,NULL',
