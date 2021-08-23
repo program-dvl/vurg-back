@@ -5,7 +5,7 @@
     "title": "Vurg Platform",
     "description": "Peer to peer market place for cryptocurrencies"
   },
-  "host": "api.vurg.com",
+  "host": "dev-api.vurg.com",
   "basePath": "/api/",
   "tags": [
     {
@@ -19,7 +19,7 @@
     }
   ],
   "paths":{
-    "login": {
+    "/login": {
       "post": {
         "operationId": "POST-vurg-customer-login",
         "summary": "User Login API",
@@ -59,7 +59,7 @@
         }
       }
     },
-    "register": {
+    "/register": {
       "post": {
         "operationId": "POST-vurg-customer-register",
         "summary": "User registration API",
@@ -103,7 +103,7 @@
         }
       }
     },
-    "email/verify/{id}": {
+    "/email/verify/{id}": {
       "get": {
         "operationId": "POST-vurg-customer-email-verification",
         "summary": "User email verification API",
@@ -132,7 +132,7 @@
         }
       }
     },
-    "email/resend": {
+    "/email/resend": {
       "get": {
         "operationId": "POST-vurg-customer-varifcation-email-resend",
         "summary": "Verification email resend",
@@ -168,7 +168,7 @@
         }
       }
     },
-    "otp/send": {
+    "/otp/send": {
       "post": {
         "operationId": "POST-vurg-otp-send",
         "summary": "Send otp on user's mobile API",
@@ -204,7 +204,7 @@
         }
       }
     },
-    "otp/verify": {
+    "/otp/verify": {
       "post": {
         "operationId": "POST-vurg-otp-verify",
         "summary": "Verify otp on user's mobile number API",
@@ -244,7 +244,7 @@
         }
       }
     },
-    "upload/avatar": {
+    "/upload/avatar": {
       "post": {
         "operationId": "POST-upload-avatar",
         "summary": "Upload User avatar from user settings",
@@ -283,7 +283,7 @@
         }
       }
     },
-    "remove/avatar": {
+    "/remove/avatar": {
       "get": {
         "operationId": "POST-remove-user-avatar",
         "summary": "Remove user avatar",
@@ -315,7 +315,7 @@
         }
       }
     },
-    "username/update": {
+    "/username/update": {
       "post": {
         "operationId": "POST-change-username",
         "summary": "Change user name",
@@ -354,7 +354,7 @@
         }
       }
     },
-    "get/timezones": {
+    "/timezones": {
       "get": {
         "operationId": "GET-Timezone",
         "summary": "Get all timezones",
@@ -371,7 +371,7 @@
         }
       }
     },
-    "get/currencies": {
+    "/currencies": {
       "get": {
         "operationId": "GET-currencies",
         "summary": "Get all currencies",
@@ -388,7 +388,7 @@
         }
       }
     },
-    "get/countries": {
+    "/countries": {
       "get": {
         "operationId": "GET-countries",
         "summary": "Get all countries & country code for phone number",
@@ -405,7 +405,7 @@
         }
       }
     },
-    "get/settings": {
+    "/settings": {
       "get": {
         "operationId": "GET-settings",
         "summary": "Get all setting list",
@@ -422,7 +422,7 @@
         }
       }
     },
-    "profile/update": {
+    "/profile/update": {
       "post": {
         "operationId": "POST-update-user-profile",
         "summary": "Update user profile",
