@@ -24,16 +24,16 @@ Route::get('email/verify/{id}', 'App\Http\Controllers\Auth\VerificationControlle
 Route::post('contactus', 'App\Http\Controllers\User\ContactUsController@store');
 
 // Get All Timezones
-Route::get('get/timezones', 'App\Http\Controllers\User\TimezoneController@index');
+Route::get('timezones', 'App\Http\Controllers\User\TimezoneController@index');
 
 // Get All Currencies
-Route::get('get/currencies', 'App\Http\Controllers\User\CurrencyController@index');
+Route::get('currencies', 'App\Http\Controllers\User\CurrencyController@index');
 
 // Get All Countries with Phone code
-Route::get('get/countries', 'App\Http\Controllers\User\CountryController@index');
+Route::get('countries', 'App\Http\Controllers\User\CountryController@index');
 
-// Get All Countries with Phone code
-Route::get('get/settings', 'App\Http\Controllers\User\SettingsController@index');
+// Get All Settings
+Route::get('settings', 'App\Http\Controllers\User\SettingsController@index');
 
 Route::middleware(['auth:sanctum'])->group(function () {
     // Route::get('user', 'App\Http\Controllers\User\UserController@index');
