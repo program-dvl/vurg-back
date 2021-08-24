@@ -59,6 +59,54 @@
         }
       }
     },
+    "contactus": {
+      "post": {
+        "operationId": "POST-contactus",
+        "summary": "Contact Us form",
+        "tags": [
+          "Authentication"
+        ],
+        "consumes": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "type": "object",
+              "properties": {
+                "email": {
+                  "type": "string",
+                  "example": "dhaval@vurg.com"
+                },
+                "firstname": {
+                  "type": "string",
+                  "example": "Dhaval"
+                },
+                "lastname": {
+                  "type": "string",
+                  "example": "Prajapati"
+                },
+                "message": {
+                  "type": "string",
+                  "example": "Hello There, Lorem Ipsum"
+                }
+              }
+            }
+          }
+        ],
+        "responses": {
+          "400": {
+            "description": "Bad Request"
+          },
+          "422": {
+            "description": "Invalid input"
+          }
+        }
+      }
+    },
     "register": {
       "post": {
         "operationId": "POST-vurg-customer-register",

@@ -32,13 +32,6 @@ class CreateUsersTable extends Migration
             $table->rememberToken();
             $table->timestamps();
             $table->softDeletes();
-
-            $table->foreign('preferred_currency')
-                    ->references('id')->on('currencies')
-                    ->onDelete('cascade');
-            $table->foreign('timezone')
-                    ->references('id')->on('timezones')
-                    ->onDelete('cascade');
         });
     }
 

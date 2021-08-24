@@ -21,6 +21,8 @@ Route::post('login', 'App\Http\Controllers\Auth\AuthController@login');
 Route::post('register', 'App\Http\Controllers\Auth\AuthController@register');
 Route::get('email/verify/{id}', 'App\Http\Controllers\Auth\VerificationController@verify')->name('verification.verify');
 
+Route::post('contactus', 'App\Http\Controllers\User\ContactUsController@store');
+
 // Get All Timezones
 Route::get('get/timezones', 'App\Http\Controllers\User\TimezoneController@index');
 

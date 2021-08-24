@@ -23,13 +23,6 @@ class CreateUserSettingTable extends Migration
             $table->tinyInteger('app')->default(0)->comment("0:Inactive, 1:Active");
             $table->tinyInteger('other_setting')->default(0)->comment("0:Inactive, 1:Active");
             $table->timestamps();
-
-            $table->foreign('user_id')
-                    ->references('id')->on('users')
-                    ->onDelete('cascade');
-            $table->foreign('setting_id')
-                    ->references('id')->on('settings')
-                    ->onDelete('cascade');
         });
     }
 
