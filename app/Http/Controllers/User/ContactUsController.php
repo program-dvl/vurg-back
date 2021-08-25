@@ -26,8 +26,7 @@ class ContactUsController extends Controller
             $validator = Validator::make($request->all(), [
                 'firstname' => 'required',
                 'lastname' => 'required',
-                'email' => 'required',
-                'message' => 'required',
+                'email' => 'required'
             ]);
 
             if ($validator->fails()) {
@@ -40,12 +39,12 @@ class ContactUsController extends Controller
             $contactUs->first_name = $input['firstname'];
             $contactUs->last_name = $input['lastname'];
             $contactUs->email = $input['email'];
-            $contactUs->message = $input['message'];
+            $contactUs->message = !empty($input['message']) ? $input['message'] : '';
             $contactUs->Save();
 
             $data = array('contactUs'=>$contactUs);
             Mail::send('emails.contact_us', $data, function($message) use ($input) {
-                $message->to('dhaval@vurg.com', 'Contact Us')->subject
+                $message->to('sam.love9093@gmail.com', 'Contact Us')->subject
                 ('Contact Us form filled');
                 $message->from('iris@vurg.com','Dhaval Prajapati');
             });
