@@ -45,9 +45,9 @@ class ContactUsController extends Controller
 
             $data = array('contactUs'=>$contactUs);
             Mail::send('emails.contact_us', $data, function($message) use ($input) {
-                $message->to('dhaval@vurg.com', 'Contact Us')->subject
+                $message->to('support@vurg.com', 'Contact Us')->subject
                 ('Contact Us form filled');
-                $message->from('iris@vurg.com','Dhaval Prajapati');
+                $message->from($input['email'], $input['firstname']);
             });
 
 
