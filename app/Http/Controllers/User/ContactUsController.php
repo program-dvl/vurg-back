@@ -26,7 +26,8 @@ class ContactUsController extends Controller
             $validator = Validator::make($request->all(), [
                 'firstname' => 'required',
                 'lastname' => 'required',
-                'email' => 'required'
+                'email' => 'required',
+                'message' => 'required'
             ]);
 
             if ($validator->fails()) {
