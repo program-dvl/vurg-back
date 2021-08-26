@@ -26,12 +26,12 @@ class ContactUsController extends Controller
             $validator = Validator::make($request->all(), [
                 'firstname' => 'required',
                 'lastname' => 'required',
-                'email' => 'required',
+                'email' => 'required|email:rfc,dns',
                 'message' => 'required'
             ]);
 
             if ($validator->fails()) {
-                return $this->sendValidationError($validator->messages());
+                return $this->sendError($validator->errors()->first(), Response::HTTP_UNPROCESSABLE_ENTITY);
             }
 
             $input = $request->all();
@@ -49,11 +49,8 @@ class ContactUsController extends Controller
                 ('Contact Us form filled');
                 $message->from($input['email'], $input['firstname']);
             });
-
-
             return $this->sendSuccess([], 'Contact us form submitted');
         } catch (\Exception $e) {
-            dd($e->getMessage());
             return $this->sendError();
         }
     }

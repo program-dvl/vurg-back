@@ -72,11 +72,7 @@ class AuthController extends Controller
 
         // If request parameter have any error
         if ($validator->fails()) {
-            return $this->responseHelper->error(
-                Response::HTTP_UNPROCESSABLE_ENTITY,
-                Response::$statusTexts[Response::HTTP_UNPROCESSABLE_ENTITY],
-                $validator->errors()->first()
-            );
+            return $this->sendError($validator->errors()->first(), Response::HTTP_UNPROCESSABLE_ENTITY);
         }
         
         $requestData = [
@@ -97,8 +93,8 @@ class AuthController extends Controller
         $apiStatus = Response::HTTP_OK;
         $apiMessage = 'User created successfully.';
         $apiData = $user->toArray();
-
-        return $this->responseHelper->success($apiStatus, $apiMessage, $apiData);
+        
+        return $this->sendSuccess($apiData, $apiMessage, $apiStatus);
     }
 
     public function login(Request $request):JsonResponse
@@ -113,11 +109,7 @@ class AuthController extends Controller
 
         // If request parameter have any error
         if ($validator->fails()) {
-            return $this->responseHelper->error(
-                Response::HTTP_UNPROCESSABLE_ENTITY,
-                Response::$statusTexts[Response::HTTP_UNPROCESSABLE_ENTITY],
-                $validator->errors()->first()
-            );
+            return $this->sendError($validator->errors()->first(), Response::HTTP_UNPROCESSABLE_ENTITY);
         }
 
         $credentials = $request->only('email', 'password');
@@ -130,13 +122,13 @@ class AuthController extends Controller
             $apiMessage = 'User logged in successfully.';
             $apiData = $user->toArray();
 
-            return $this->responseHelper->success($apiStatus, $apiMessage, $apiData);
+            return $this->sendSuccess($apiData, $apiMessage, $apiStatus);
         }
 
         // Set response data
         $apiStatus = Response::HTTP_NOT_FOUND;
         $apiMessage = 'The provided credentials do not match our records.';
 
-        return $this->responseHelper->success($apiStatus, $apiMessage);
+        return $this->sendError($apiMessage, $apiStatus);
     }
 }
