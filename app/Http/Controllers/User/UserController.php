@@ -76,8 +76,7 @@ class UserController extends Controller
             ]);
     
             if ($validator->fails()) {
-                // return $this->sendValidationError($validator->messages());
-                return $this->sendError($validator->errors()->first(), Response::HTTP_UNPROCESSABLE_ENTITY);
+                return $this->sendValidationError($validator->messages());
             }
     
             $image = $request->file('profile_pic');
@@ -135,8 +134,7 @@ class UserController extends Controller
             ]);
     
             if ($validator->fails()) {
-                // return $this->sendValidationError($validator->messages());
-                return $this->sendError($validator->errors()->first(), Response::HTTP_UNPROCESSABLE_ENTITY);
+                return $this->sendValidationError($validator->messages());
             }
 
             $input = $request->all();            
@@ -182,8 +180,7 @@ class UserController extends Controller
             ]);
 
             if ($validator->fails()) {
-                // return $this->sendValidationError($validator->messages());
-                return $this->sendError($validator->errors()->first(), Response::HTTP_UNPROCESSABLE_ENTITY);
+                return $this->sendValidationError($validator->messages());
             }
 
             $input = $request->all();            

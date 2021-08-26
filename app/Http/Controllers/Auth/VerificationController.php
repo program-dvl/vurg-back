@@ -62,7 +62,7 @@ class VerificationController extends Controller
 
         // If request parameter have any error
         if ($validator->fails()) {
-            return $this->sendError($validator->errors()->first(), Response::HTTP_UNPROCESSABLE_ENTITY);
+            return $this->sendValidationError($validator->messages());
         }
 
         $verification = $this->twilio->verify->v2->services(env("TWILIO_VERIFICATION_SID"))
@@ -89,11 +89,7 @@ class VerificationController extends Controller
 
         // If request parameter have any error
         if ($validator->fails()) {
-            return $this->responseHelper->error(
-                Response::HTTP_UNPROCESSABLE_ENTITY,
-                Response::$statusTexts[Response::HTTP_UNPROCESSABLE_ENTITY],
-                $validator->errors()->first()
-            );
+            return $this->sendValidationError($validator->messages());
         }
 
         $verification_check = $this->twilio->verify->v2->services(env("TWILIO_VERIFICATION_SID"))
@@ -103,17 +99,13 @@ class VerificationController extends Controller
         if (!$verification_check->valid) {
             // Set response data
             $apiMessage = 'OTP verification failed.';
-            return $this->responseHelper->error(
-                Response::HTTP_UNPROCESSABLE_ENTITY,
-                Response::$statusTexts[Response::HTTP_UNPROCESSABLE_ENTITY],
-                $apiMessage
-            );
+            return $this->sendError($apiMessage, Response::HTTP_UNPROCESSABLE_ENTITY);
         }
 
         $apiStatus = Response::HTTP_OK;
         $apiMessage = 'OTP verified successfully.';
 
-        return $this->responseHelper->success($apiStatus, $apiMessage);
+        return $this->sendSuccess([], $apiMessage, $apiStatus);
             
 
     }

@@ -72,7 +72,7 @@ class AuthController extends Controller
 
         // If request parameter have any error
         if ($validator->fails()) {
-            return $this->sendError($validator->errors()->first(), Response::HTTP_UNPROCESSABLE_ENTITY);
+            return $this->sendValidationError($validator->messages());
         }
         
         $requestData = [
@@ -109,7 +109,7 @@ class AuthController extends Controller
 
         // If request parameter have any error
         if ($validator->fails()) {
-            return $this->sendError($validator->errors()->first(), Response::HTTP_UNPROCESSABLE_ENTITY);
+            return $this->sendValidationError($validator->messages());
         }
 
         $credentials = $request->only('email', 'password');
