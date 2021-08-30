@@ -11,6 +11,7 @@ use Illuminate\Http\Response;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Support\Facades\Auth;
 use App\Models\User;
+use Illuminate\Support\Facades\Hash;
 use App\Models\UserSettings;
 use Validator;
 use File;
@@ -52,6 +53,8 @@ class UserController extends Controller
         $this->userRepository = $userRepository;
     }
 
+    
+
     public function index(Request $request): JsonResponse
     {
         // Get user
@@ -84,13 +87,13 @@ class UserController extends Controller
             $userDetails = User::find(Auth::id());
     
             if(!empty($userDetails)) {
-                if(!empty($userDetails->avatar_url)) {
-                    $imagePath = public_path('/user_profile') . "/" .$userDetails->avatar_url;
+                if(!empty($userDetails->avatar_image)) {
+                    $imagePath = public_path('/user_profile') . "/" .$userDetails->avatar_image;
                     if(File::exists($imagePath)){
                         unlink($imagePath);
                     }    
                 }
-                User::where('id' , Auth::id())->update(['avatar_url' => $input['imagename']]);
+                User::where('id' , Auth::id())->update(['avatar_image' => $input['imagename']]);
                 $imageUrl = public_path('/user_profile') . '/' .$input['imagename'];
                 return $this->sendSuccess($imageUrl, 'Avatar Image uploaded successfully');
             }
@@ -109,11 +112,11 @@ class UserController extends Controller
             }
     
             if(!empty($userDetails)) {
-                if(!empty($userDetails->avatar_url)) {
-                    $imagePath = public_path('/user_profile') . "/" .$userDetails->avatar_url;
+                if(!empty($userDetails->avatar_image)) {
+                    $imagePath = public_path('/user_profile') . "/" .$userDetails->avatar_image;
                     if(File::exists($imagePath)){
                         unlink($imagePath);
-                        User::where('id' , Auth::id())->update(['avatar_url' => null]);
+                        User::where('id' , Auth::id())->update(['avatar_image' => null]);
                     }
                 }
                 return $this->sendSuccess(array(), 'Avatar Image removed successfully');
@@ -180,7 +183,7 @@ class UserController extends Controller
                 return $this->sendValidationError($validator->messages());
             }
 
-            $input = $request->all();            
+            $input = $request->all();
             $userDetails = User::find(Auth::id());
 
             if(empty($userDetails)) {
@@ -205,14 +208,62 @@ class UserController extends Controller
                     ],[
                         'web' => $setting['web'],
                         'email' => $setting['email'],
-                        'other_setting' => $setting['other_setting']
+                        'other_setting' => !empty($setting['other_setting']) ? $setting['other_setting'] : 0
                     ]);
                 }
             }
             
             return $this->sendSuccess(User::find(Auth::id()), 'Profile updated sucessfully');
         } catch (\Exception $e) {
+            
             return $this->sendError();
         }        
     }
+
+    public function getProfile(Request $request)
+    {
+        try {
+            $user = $this->userRepository->userDetailsForProfile(Auth::id());
+            return $this->sendSuccess($user, 'Profile fetched sucessfully');
+        } catch (\Exception $e) {
+            dd($e->getMessage());
+            return $this->sendError();
+        }        
+    }
+
+    public function changePassword(Request $request)
+    {
+        try {
+            $validator = Validator::make($request->all(), [
+                'current_password' => 'required',
+                'new_password' => 'required',
+                'confirm_password' => 'required'                
+            ]);
+
+            if ($validator->fails()) {
+                return $this->sendValidationError($validator->messages());
+            }
+
+            $user = $this->userRepository->userDetails(Auth::id());
+
+            $input = $request->all();
+            
+            if(!Hash::check($input['current_password'], $user->password)) {
+                return $this->sendError("Invalid current password");
+            }
+
+            if($input['new_password'] != $input['confirm_password']) {
+                return $this->sendError("New password and Confirm password does not match.");
+            }
+
+            $dataUpdate = ["password" => Hash::make($input['new_password'])];
+            $this->userRepository->updateUserDetails(Auth::id(), $dataUpdate);
+
+            return $this->sendSuccess($user, 'Password changed');
+        } catch (\Exception $e) {
+            dd($e->getMessage());
+            return $this->sendError();
+        }        
+    }
+
 }

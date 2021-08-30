@@ -19,7 +19,10 @@ class DatabaseSeeder extends Seeder
             TimezoneSeeder::class,
             CurrencySeeder::class,
             CountrySeeder::class,
-            SettingSeeder::class
+            SettingSeeder::class,
+            OfferTagsSeeder::class,
+            PaymentMethodCategorySeeder::class,
+            PaymentMethodsSeeder::class
         ]);
     }
 }

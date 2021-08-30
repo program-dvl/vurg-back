@@ -16,17 +16,18 @@ class UserSeeder extends Seeder
     public function run()
     {
         $users = [
-            ['1','darshan','darshan2593@yahoo.com','123456789', 'darshan'],
-            ['2','darshan','sam.love9093@gmail.com','123456789', 'sam'],
+            ['1','darshan','prajapati','darshan2593@yahoo.com','123456789', 'darshan'],
+            ['2','darshan','prajapati','sam.love9093@gmail.com','123456789', 'sam'],
         ];
 
         foreach($users as $key=>$value){
             $userInsert = [
                 'id' => $value[0],
-                'name' => $value[1],
-                'email' => $value[2],
-                'password' => Hash::make($value[3]),
-                'username' => $value[4]
+                'firstname' => $value[1],
+                'lastname' => $value[2],
+                'email' => $value[3],
+                'password' => Hash::make($value[4]),
+                'username' => $value[5]
             ];
             DB::table('users')->insert($userInsert);
         }

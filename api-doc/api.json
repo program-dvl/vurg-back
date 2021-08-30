@@ -16,6 +16,9 @@
     },
     {
       "name": "User Settings"
+    },
+    {
+      "name": "User Profile"
     }
   ],
   "paths":{
@@ -237,6 +240,11 @@
                 "phone": {
                   "type": "string",
                   "example": "+912547856541"
+                },
+                "phone_code": {
+                  "type": "integer",
+                  "example": "1",
+                  "description": "Main ID of phonecode"
                 }
               }
             }
@@ -490,7 +498,8 @@
               "properties": {
                 "display_name": {
                   "type": "integer",
-                  "example": "1:Firstname and initial, 2: Full name, 3: Hide full name"
+                  "example": "1",
+                  "description": "1:Firstname and initial, 2: Full name, 3: Hide full name"
                 },
                 "bio": {
                   "type": "text",
@@ -508,6 +517,170 @@
                   "type": "array",
                   "example": "[{setting_id:2,web:1,email:0,other_setting:0}, {setting_id:3,web:0,email:0,other_setting:0}]"
                 }
+              }
+            }
+          }
+        ],
+        "responses": {
+          "400": {
+            "description": "Bad Request"
+          },
+          "422": {
+            "description": "Invalid input"
+          }
+        }
+      }
+    },
+    "/get/profile": {
+      "get": {
+        "operationId": "GET-profile",
+        "summary": "Get Logged In User profile",
+        "tags": [
+          "User Profile"
+        ],
+        "consumes": [
+          "application/json"
+        ],
+        "responses": {
+          "400": {
+            "description": "Bad Request"
+          }
+        }
+      }
+    },
+    "/change/password": {
+      "post": {
+        "operationId": "POST-change-password",
+        "summary": "Change User Password",
+        "tags": [
+          "User Profile"
+        ],
+        "consumes": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "type": "object",
+              "properties": {
+                "current_password": {
+                  "type": "string",
+                  "example": "dhaval@123"
+                },
+                "new_password": {
+                  "type": "string",
+                  "example": "dhaval@123456"
+                },
+                "confirm_password": {
+                  "type": "string",
+                  "example": "dhaval@123456"
+                }                
+              }
+            }
+          }
+        ],
+        "responses": {
+          "400": {
+            "description": "Bad Request"
+          },
+          "422": {
+            "description": "Invalid input"
+          },
+          "501": {
+            "description": "Invalid current password"
+          }
+        }
+      }
+    },
+    "/get/offers": {
+      "post": {
+        "operationId": "POST-fetch-user-offers",
+        "summary": "Fetch user's offers",
+        "tags": [
+          "User Profile"
+        ],
+        "consumes": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "type": "object",
+              "properties": {
+                "offer_type": {
+                  "type": "integer",
+                  "example": "1",
+                  "description": "1:Buy, 2:Sell"
+                },
+                "currency_type": {
+                  "type": "integer",
+                  "example": "0",
+                  "description": "0:All, 1:Bicoin, 2:Tether,3: Ethereum"
+                },
+                "per_page": {
+                  "type": "integer",
+                  "example": "10"
+                },
+                "page_number": {
+                  "type": "integer",
+                  "example": "1"
+                }                
+              }
+            }
+          }
+        ],
+        "responses": {
+          "400": {
+            "description": "Bad Request"
+          },
+          "422": {
+            "description": "Invalid input"
+          }
+        }
+      }
+    },
+    "/get/feedback": {
+      "post": {
+        "operationId": "POST-fetch-user-feedback",
+        "summary": "Fetch user's feedback",
+        "tags": [
+          "User Profile"
+        ],
+        "consumes": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "type": "object",
+              "properties": {
+                "offer_type": {
+                  "type": "integer",
+                  "example": "1",
+                  "description": "1:Buyer, 2:Seller"
+                },
+                "feedback_type": {
+                  "type": "integer",
+                  "example": "0",
+                  "description": "0:All, 1:Positive, 2:Negative"
+                },
+                "per_page": {
+                  "type": "integer",
+                  "example": "10"
+                },
+                "page_number": {
+                  "type": "integer",
+                  "example": "1"
+                }                
               }
             }
           }

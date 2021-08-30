@@ -52,6 +52,12 @@ class User extends Authenticatable implements MustVerifyEmail
         'remember_token',
     ];
 
+    protected $appends = [
+        'avatar_full_url',
+        'firstname_and_initial',
+        'full_name'
+    ];
+
     /**
      * The attributes that should be cast to native types.
      *
@@ -60,4 +66,38 @@ class User extends Authenticatable implements MustVerifyEmail
     protected $casts = [
         'email_verified_at' => 'datetime',
     ];
+
+    public function settings() {
+        return $this->hasMany('App\Models\UserSettings','user_id');
+    }
+
+    public function currency() {
+        return $this->belongsTo('App\Models\Currency','preferred_currency');
+    }
+
+    public function timezone() {
+        return $this->belongsTo('App\Models\Timezone','timezone');
+    }
+
+    public function phonecode() {
+        return $this->belongsTo('App\Models\Country','phone_code');
+    }
+
+    public function getAvatarFullUrlAttribute()
+    {
+        if(!empty($this->avatar_image)) {
+            return public_path('/user_profile') . '/' .$this->avatar_image;
+        }
+        return null;
+    }
+
+    public function getFirstnameAndInitialAttribute()
+    {
+        return $this->firstname . " " . substr($this->lastname,0,1);
+    }
+
+    public function getFullNameAttribute()
+    {
+        return $this->firstname . " " . $this->lastname;
+    }
 }

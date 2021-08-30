@@ -35,11 +35,12 @@ Route::get('countries', 'App\Http\Controllers\User\CountryController@index');
 // Get All Settings
 Route::get('settings', 'App\Http\Controllers\User\SettingsController@index');
 
-Route::middleware(['auth:sanctum'])->group(function () {
+Route::middleware(['auth:sanctum', 'lastActivity'])->group(function () {
     // Route::get('user', 'App\Http\Controllers\User\UserController@index');
     Route::get('email/resend', 'App\Http\Controllers\Auth\VerificationController@resend')->name('verification.resend');
     Route::post('otp/send', 'App\Http\Controllers\Auth\VerificationController@sendOTP')->name('verify.otp');
     Route::post('otp/verify', 'App\Http\Controllers\Auth\VerificationController@verifyOTP')->name('verify.otp');
+    Route::post('change/password', 'App\Http\Controllers\User\UserController@changePassword');
 
     // User Avatar
     Route::post('upload/avatar', 'App\Http\Controllers\User\UserController@uploadAvatar');
@@ -50,4 +51,12 @@ Route::middleware(['auth:sanctum'])->group(function () {
 
     // Update Profile
     Route::post('profile/update', 'App\Http\Controllers\User\UserController@updateProfile');
+    // Get Profile
+    Route::get('profile', 'App\Http\Controllers\User\UserController@getProfile');
+
+    // Get Offers
+    Route::post('get/offers', 'App\Http\Controllers\User\OffersController@index');
+
+    // Get Feedback
+    Route::post('get/feedback', 'App\Http\Controllers\User\OfferTradeFeedbackController@index');
 });

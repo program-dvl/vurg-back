@@ -6,6 +6,7 @@ use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
 use Illuminate\Foundation\Bus\DispatchesJobs;
 use Illuminate\Foundation\Validation\ValidatesRequests;
 use Illuminate\Routing\Controller as BaseController;
+use Illuminate\Support\Facades\Auth;
 
 class Controller extends BaseController
 {
@@ -20,7 +21,7 @@ class Controller extends BaseController
         return response()->json($res);
     }
 
-    public function sendError ($message = GLOBAL_SOMETHING_WANTS_TO_WRONG , $code = 501, $extraCode = 501){
+    public function sendError($message = GLOBAL_SOMETHING_WANTS_TO_WRONG , $code = 501, $extraCode = 501){
         $res['code'] = $code;
         $res['extra_code'] = $extraCode;
         $res['message'] = $message;
@@ -28,7 +29,7 @@ class Controller extends BaseController
         return response()->json($res);
     }
 
-    static function sendValidationError($errors, $message = 'error', $code = 502){
+    static function sendValidationError($errors, $message = 'error', $code = 422){
         $res['data'] = ['errors' => $errors];
         $res['code'] = $code;
         $res['message'] = $message;
