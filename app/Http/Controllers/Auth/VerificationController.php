@@ -24,7 +24,8 @@ class VerificationController extends Controller
     
     public function verify($user_id, Request $request) {
         if (!$request->hasValidSignature()) {
-            return response()->json(["msg" => "Invalid/Expired url provided."], 401);
+            // return response()->json(["msg" => "Invalid/Expired url provided."], 401);
+            return $this->sendError("Invalid/Expired url provided.", 401);
         }
     
         $user = User::findOrFail($user_id);
@@ -38,12 +39,14 @@ class VerificationController extends Controller
     
     public function resend() {
         if (auth()->user()->hasVerifiedEmail()) {
-            return response()->json(["msg" => "Email already verified."], 400);
+            // return response()->json(["msg" => "Email already verified."], 400);
+            return $this->sendError("Email already verified.", 400);
         }
     
         auth()->user()->sendEmailVerificationNotification();
     
-        return response()->json(["msg" => "Email verification link sent on your email id"]);
+        // return response()->json(["msg" => "Email verification link sent on your email id"]);
+        return $this->sendSuccess([], 'Email verification link sent on your email id');
     }
 
     public function sendOTP(Request $request): JsonResponse
@@ -62,11 +65,7 @@ class VerificationController extends Controller
 
         // If request parameter have any error
         if ($validator->fails()) {
-            return $this->responseHelper->error(
-                Response::HTTP_UNPROCESSABLE_ENTITY,
-                Response::$statusTexts[Response::HTTP_UNPROCESSABLE_ENTITY],
-                $validator->errors()->first()
-            );
+            return $this->sendValidationError($validator->messages());
         }
 
         $verification = $this->twilio->verify->v2->services(env("TWILIO_VERIFICATION_SID"))
@@ -77,8 +76,8 @@ class VerificationController extends Controller
         $apiStatus = Response::HTTP_OK;
         $apiMessage = 'OTP sent on your mobile successfully.';
 
-        return $this->responseHelper->success($apiStatus, $apiMessage);
-
+        // return $this->responseHelper->success($apiStatus, $apiMessage);
+        return $this->sendSuccess([], $apiMessage, $apiStatus);
     }
 
     public function verifyOTP(Request $request): JsonResponse
@@ -93,11 +92,7 @@ class VerificationController extends Controller
 
         // If request parameter have any error
         if ($validator->fails()) {
-            return $this->responseHelper->error(
-                Response::HTTP_UNPROCESSABLE_ENTITY,
-                Response::$statusTexts[Response::HTTP_UNPROCESSABLE_ENTITY],
-                $validator->errors()->first()
-            );
+            return $this->sendValidationError($validator->messages());
         }
 
         $verification_check = $this->twilio->verify->v2->services(env("TWILIO_VERIFICATION_SID"))
@@ -107,17 +102,13 @@ class VerificationController extends Controller
         if (!$verification_check->valid) {
             // Set response data
             $apiMessage = 'OTP verification failed.';
-            return $this->responseHelper->error(
-                Response::HTTP_UNPROCESSABLE_ENTITY,
-                Response::$statusTexts[Response::HTTP_UNPROCESSABLE_ENTITY],
-                $apiMessage
-            );
+            return $this->sendError($apiMessage, Response::HTTP_UNPROCESSABLE_ENTITY);
         }
 
         $apiStatus = Response::HTTP_OK;
         $apiMessage = 'OTP verified successfully.';
 
-        return $this->responseHelper->success($apiStatus, $apiMessage);
+        return $this->sendSuccess([], $apiMessage, $apiStatus);
             
 
     }

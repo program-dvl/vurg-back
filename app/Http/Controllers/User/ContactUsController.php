@@ -26,7 +26,8 @@ class ContactUsController extends Controller
             $validator = Validator::make($request->all(), [
                 'firstname' => 'required',
                 'lastname' => 'required',
-                'email' => 'required'
+                'email' => 'required|email:rfc,dns',
+                'message' => 'required'
             ]);
 
             if ($validator->fails()) {
@@ -44,14 +45,13 @@ class ContactUsController extends Controller
 
             $data = array('contactUs'=>$contactUs);
             Mail::send('emails.contact_us', $data, function($message) use ($input) {
-                $message->to('sam.love9093@gmail.com', 'Contact Us')->subject
+                $message->to('support@vurg.com', 'Contact Us')->subject
                 ('Contact Us form filled');
                 $message->from(env('mail_from_address'),env('MAIL_FROM_NAME'));
             });
 
             return $this->sendSuccess([], 'Contact us form submitted');
         } catch (\Exception $e) {
-            dd($e->getMessage());
             return $this->sendError();
         }
     }

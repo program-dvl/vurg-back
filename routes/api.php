@@ -60,3 +60,6 @@ Route::middleware(['auth:sanctum', 'lastActivity'])->group(function () {
     // Get Feedback
     Route::post('get/feedback', 'App\Http\Controllers\User\OfferTradeFeedbackController@index');
 });
+
+// Route::get('wallet', 'App\Http\Controllers\User\UserController@add');
+// Route::get('express', 'App\Http\Controllers\User\UserController@express');

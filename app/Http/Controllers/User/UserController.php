@@ -15,6 +15,9 @@ use Illuminate\Support\Facades\Hash;
 use App\Models\UserSettings;
 use Validator;
 use File;
+use neto737\BitGoSDK\BitGoSDK;
+use neto737\BitGoSDK\BitGoExpress;
+use neto737\BitGoSDK\Enum\CurrencyCode;
 
 class UserController extends Controller
 {
@@ -266,4 +269,37 @@ class UserController extends Controller
         }        
     }
 
+    public function add() {
+       
+        //$bitgo->walletId = 'YOUR_WALLET_ID_HERE';
+        $bitgo = new BitGoSDK('e6a82b81237b2f0b83f82c5fbea307944c425a6c21065eb03a0908bbe6770e43', 'tbtc', true);
+        $createAddress = $bitgo->createWallet(CurrencyCode::BITCOIN, 'Bitcoin');
+        // dd($createAddress);
+ 
+        //$hostname = 'app.bitgo-test.com';
+        // $hostname = 'app.bitgo-test.com';
+        // $port = 3080;
+        // $coin = CurrencyCode::BITCOIN;
+        // $bitgo = new BitGoExpress($hostname, $port, $coin);
+        // $bitgo->accessToken = 'd80089ee537b24f8635af24bf9de7b074aab7145d9c5ed1ac6fad9d08faf6719';
+        // $keyChain = $bitgo->createKeychain();
+        // dd($keyChain);
+        // // //$bitgo->walletId = 'YOUR_WALLET_ID_HERE';
+        
+        // $createAddress = $bitgo->addWallet('Bitcoin', 2, 3, []);
+        dd($createAddress);
+    }
+ 
+    public function express() {
+        $hostname = 'localhost';
+        $port = 3080;
+        $coin = CurrencyCode::BITCOIN_TESTNET;
+ 
+        $bitgoExpress = new BitGoExpress($hostname, $port, $coin);
+        $bitgoExpress->accessToken = 'd80089ee537b24f8635af24bf9de7b074aab7145d9c5ed1ac6fad9d08faf6719';
+        $keyChain = $bitgoExpress->createKeychain();
+        dd($keyChain);
+        //$generateWallet = $bitgoExpress->generateWallet('LABEL_HERE', 'CREATE_A_NEW_PASSPHRASE_HERE');
+        //var_dump($generateWallet);
+    }
 }

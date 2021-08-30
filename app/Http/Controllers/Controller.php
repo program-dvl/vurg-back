@@ -29,10 +29,11 @@ class Controller extends BaseController
         return response()->json($res);
     }
 
-    static function sendValidationError($errors, $message = 'error', $code = 422){
-        $res['data'] = ['errors' => $errors];
+    static function sendValidationError($errors, $message = 'error', $code = 502, $extraCode = 501){
+        // $res['data'] = $errors;
         $res['code'] = $code;
-        $res['message'] = $message;
+        $res['extra_code'] = $extraCode;
+        $res['message'] = $errors->first();
         $res['success'] = GLOBAL_FALSE;
         return response()->json($res);
     }
