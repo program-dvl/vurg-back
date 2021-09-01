@@ -300,7 +300,7 @@
           "User Settings"
         ],
         "consumes": [
-          "application/json"
+          "multipart/form-data"
         ],
         "parameters": [
           {
@@ -311,8 +311,7 @@
               "type": "object",
               "properties": {
                 "profile_pic": {
-                  "type": "multipart form data",
-                  "example": ""
+                  "type": "image/*"
                 }
               }
             }

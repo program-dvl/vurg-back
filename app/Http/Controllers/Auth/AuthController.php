@@ -13,6 +13,7 @@ use Illuminate\Http\JsonResponse;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Auth;
 use Validator;
+use App\Events\GenerateWallet;
 
 class AuthController extends Controller
 {
@@ -85,9 +86,12 @@ class AuthController extends Controller
         // Store user
         $user = $this->authRepository->store($requestData);
 
-        event(new Registered($user));
+      //  event(new Registered($user));
 
         Auth::login($user);
+
+        // Generate wallets 
+        event(new GenerateWallet($user));
 
         // Set response data
         $apiStatus = Response::HTTP_OK;

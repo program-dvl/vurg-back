@@ -50,6 +50,9 @@ Route::middleware(['auth:sanctum'])->group(function () {
 
     // Update Profile
     Route::post('profile/update', 'App\Http\Controllers\User\UserController@updateProfile');
+
+    // Get user wallets
+    Route::get('wallet', 'App\Http\Controllers\Wallet\WalletController@index');
 });
-// Route::get('wallet', 'App\Http\Controllers\User\UserController@add');
-// Route::get('express', 'App\Http\Controllers\User\UserController@express');
+
+Route::get('express', 'App\Http\Controllers\User\UserController@express');
