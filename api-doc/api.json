@@ -595,7 +595,7 @@
         }
       }
     },
-    "/get/offers": {
+    "/offers": {
       "post": {
         "operationId": "POST-fetch-user-offers",
         "summary": "Fetch user's offers",
@@ -645,7 +645,7 @@
         }
       }
     },
-    "/get/feedback": {
+    "/feedback": {
       "post": {
         "operationId": "POST-fetch-user-feedback",
         "summary": "Fetch user's feedback",

@@ -55,10 +55,10 @@ Route::middleware(['auth:sanctum', 'lastActivity'])->group(function () {
     Route::get('profile', 'App\Http\Controllers\User\UserController@getProfile');
 
     // Get Offers
-    Route::post('get/offers', 'App\Http\Controllers\User\OffersController@index');
+    Route::post('offers', 'App\Http\Controllers\User\OffersController@index');
 
     // Get Feedback
-    Route::post('get/feedback', 'App\Http\Controllers\User\OfferTradeFeedbackController@index');
+    Route::post('feedback', 'App\Http\Controllers\User\OfferTradeFeedbackController@index');
 });
 
 // Route::get('wallet', 'App\Http\Controllers\User\UserController@add');
