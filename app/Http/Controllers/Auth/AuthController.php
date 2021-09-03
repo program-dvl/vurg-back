@@ -78,7 +78,6 @@ class AuthController extends Controller
         $requestData = [
             'password' => Hash::make($request->password),
             'email' => $request->email,
-            'name' => $request->name,
             'username' => substr(str_replace(' ','',strtolower($request->name)), 0, 5).rand(1,100000)
         ];
 
@@ -130,5 +129,26 @@ class AuthController extends Controller
         $apiMessage = 'The provided credentials do not match our records.';
 
         return $this->sendError($apiMessage, $apiStatus);
+    }
+
+    /**
+     * Log the user out of the application.
+     *
+     * @param  \Illuminate\Http\Request $request
+     * @return \Illuminate\Http\Response
+     */
+    public function logout(Request $request)
+    {
+        Auth::logout();
+
+        $request->session()->invalidate();
+
+        $request->session()->regenerateToken();
+
+        // Set response data
+        $apiStatus = Response::HTTP_OK;
+        $apiMessage = 'User logged out successfully.';
+
+        return $this->sendSuccess([], $apiMessage, $apiStatus);
     }
 }
