@@ -551,7 +551,7 @@
         }
       }
     },
-    "/get/profile": {
+    "/profile": {
       "get": {
         "operationId": "GET-profile",
         "summary": "Get Logged In User profile",
