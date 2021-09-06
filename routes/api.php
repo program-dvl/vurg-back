@@ -55,10 +55,26 @@ Route::middleware(['auth:sanctum', 'lastActivity'])->group(function () {
     Route::get('profile', 'App\Http\Controllers\User\UserController@getProfile');
 
     // Get Offers
-    Route::post('offers', 'App\Http\Controllers\User\OffersController@index');
+    Route::post('offers', 'App\Http\Controllers\Offer\OffersController@index');
+    // save offers
+    Route::post('create/offer', 'App\Http\Controllers\Offer\OffersController@createOffer');
+    // save offers
+    Route::post('update/offer', 'App\Http\Controllers\Offer\OffersController@createOffer');
+    // View Offer
+    Route::get('offer/{id}', 'App\Http\Controllers\Offer\OffersController@viewOffer');
+    // CHange Offer Status
+    Route::post('offer/change/status', 'App\Http\Controllers\Offer\OffersController@changeOfferStatus');
 
     // Get Feedback
-    Route::post('feedback', 'App\Http\Controllers\User\OfferTradeFeedbackController@index');
+    Route::post('feedback', 'App\Http\Controllers\Offer\OfferTradeFeedbackController@index');
+
+    // Get Offer Tags
+    Route::get('offer/tags', 'App\Http\Controllers\Offer\OffersController@getOfferTags');
+
+    // Get Payment methods
+    Route::get('offer/paymentMethod', 'App\Http\Controllers\Offer\OffersController@getPaymentMethods');
+
+    
 });
 
 // Route::get('wallet', 'App\Http\Controllers\User\UserController@add');

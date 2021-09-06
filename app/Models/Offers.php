@@ -22,12 +22,29 @@ class Offers extends Model
      *
      * @var array
      */
-    // protected $fillable = [
-    //     'first_name',
-    //     'last_name',
-    //     'message',
-    //     'email'
-    // ];
+    protected $fillable = [
+        'cryptocurreny_type',
+        'offer_type',
+        'payment_method',
+        'preferred_currency',
+        'trade_price_type',
+        'offer_time_limit',
+        'offer_terms',
+        'trade_instruction',
+        'offer_margin_percentage',
+        'offer_margin_fixed_price',
+        'minimum_offer_trade_limits',
+        'maximum_offer_trade_limits',
+        'offer_label',
+        'offer_terms',
+        'require_verified_id',
+        'target_country',
+        'offer_visibility',
+        'minimum_trade_required',
+        'limit_for_new_users',
+        'user_id',
+        'status'
+    ];
 
     const CREATED_AT = 'created_at';
     const UPDATED_AT = 'updated_at';

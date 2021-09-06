@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Http\Controllers\User;
+namespace App\Http\Controllers\Offer;
 
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Auth;
@@ -9,7 +9,7 @@ use App\Models\OfferTradeFeedback;
 use App\Models\OfferTags;
 use Illuminate\Http\Response;
 use Validator;
-use App\Repositories\User\OfferTradeFeedbackRepository;
+use App\Repositories\Offer\OfferTradeFeedbackRepository;
 
 class OfferTradeFeedbackController extends Controller
 {

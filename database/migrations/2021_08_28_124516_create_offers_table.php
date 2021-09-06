@@ -32,8 +32,9 @@ class CreateOffersTable extends Migration
             $table->tinyInteger('require_verified_id')->default(0)->comment("0:No, 1:Yes");
             $table->integer('target_country')->nullable();
             $table->tinyInteger('offer_visibility')->nullable()->default(0);
-            $table->integer('minimum_trade_Required')->nullable()->default(0);
+            $table->integer('minimum_trade_required')->nullable()->default(0);
             $table->integer('limit_for_new_users')->nullable()->default(0);
+            $table->tinyInteger('status')->nullable()->default(1)->comment("0:Inactive, 1:Active");
             $table->timestamps();
         });
     }

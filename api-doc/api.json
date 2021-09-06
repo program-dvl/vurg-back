@@ -19,6 +19,9 @@
     },
     {
       "name": "User Profile"
+    },
+    {
+      "name": "Create Offer"
     }
   ],
   "paths":{
@@ -694,7 +697,221 @@
           }
         }
       }
-    }
+    },
+    "/offer/tags": {
+      "get": {
+        "operationId": "GET-offer-tags",
+        "summary": "Get Offer tags while creating offer",
+        "tags": [
+          "Create Offer"
+        ],
+        "consumes": [
+          "application/json"
+        ],
+        "responses": {
+          "400": {
+            "description": "Bad Request"
+          }
+        }
+      }
+    },
+    "/offer/paymentMethod": {
+      "get": {
+        "operationId": "GET-offer-payment-methods",
+        "summary": "Get all payment methods while creating offer",
+        "tags": [
+          "Create Offer"
+        ],
+        "consumes": [
+          "application/json"
+        ],
+        "responses": {
+          "400": {
+            "description": "Bad Request"
+          }
+        }
+      }
+    },
+    "/offer/change/status": {
+      "post": {
+        "operationId": "POST-change-offer-status",
+        "summary": "Change offer state - Active/Inactive",
+        "tags": [
+          "User Profile"
+        ],
+        "consumes": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "type": "object",
+              "properties": {
+                "offer_id": {
+                  "type": "integer",
+                  "example": "1"
+                },
+                "status": {
+                  "type": "integer",
+                  "example": "1",
+                  "description": "1:Active, 0:Inactive"
+                },
+                "turn_all": {
+                  "type": "integer",
+                  "example": "0",
+                  "description": "1:all offers will be active, 0: all offers will be inactive"
+                }                
+              }
+            }
+          }
+        ],
+        "responses": {
+          "400": {
+            "description": "Bad Request"
+          },
+          "422": {
+            "description": "Invalid input"
+          }
+        }
+      }
+    },
+    "/offer/{id}": {
+      "get": {
+        "operationId": "GET-offer-details-by-offer-id",
+        "summary": "Get Offer details by offer id",
+        "tags": [
+          "User Profile"
+        ],
+        "consumes": [
+          "application/json"
+        ],
+        "responses": {
+          "400": {
+            "description": "Bad Request"
+          }
+        }
+      }
+    },
+    "/create/offer": {
+      "post": {
+        "operationId": "POST-create-offer",
+        "summary": "Create Offer",
+        "tags": [
+          "Create Offer"
+        ],
+        "consumes": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "type": "object",
+              "properties": {
+                "cryptocurreny_type": {
+                  "type": "integer",
+                  "example": "1",
+                  "description": "1:Bitcoin,2:Tether,3: Ethereum"
+                },
+                "offer_type": {
+                  "type": "integer",
+                  "example": "1",
+                  "description": "1:Buy,2:Sell"
+                },
+                "payment_method": {
+                  "type": "integer",
+                  "example": "15",
+                  "description": "Payment method id"
+                },
+                "preferred_currency": {
+                  "type": "integer",
+                  "example": "15",
+                  "description": "Currency id"
+                },
+                "trade_price_type": {
+                  "type": "integer",
+                  "example": "1",
+                  "description": "1:Market Price, 2:Fixed Price"
+                },
+                "offer_margin_percentage": {
+                  "type": "integer",
+                  "example": "5",
+                  "description": "(Optional) - Offer Margin Percentage"
+                },
+                "offer_margin_fixed_price": {
+                  "type": "integer",
+                  "example": "15",
+                  "description": "(Optional) - Offer Margin Fixed Price"
+                },
+                "minimum_offer_trade_limits": {
+                  "type": "integer",
+                  "example": "1",
+                  "description": "(Optional) - minimum offer trade limits"
+                },
+                "maximum_offer_trade_limits": {
+                  "type": "integer",
+                  "example": "15",
+                  "description": "(Optional) - maximum offer trade limits"
+                },
+                "offer_time_limit": {
+                  "type": "integer",
+                  "example": "30",
+                  "description": "Default will be 30 minutes"
+                },
+                "offer_label": {
+                  "type": "string",
+                  "example": "Lorem Ipsum",
+                  "description": "(Optional) - Offer Label"
+                },
+                "offer_terms": {
+                  "type": "string",
+                  "example": "Lorem Ipsum",
+                  "description": "Offer Terms"
+                },
+                "trade_instruction": {
+                  "type": "string",
+                  "example": "Lorem Ipsum",
+                  "description": "Trade Instruction"
+                },
+                "require_verified_id": {
+                  "type": "integer",
+                  "example": "0",
+                  "description": "Require verified uder id. 0:No, 1:Yes"
+                },
+                "offer_tags": {
+                  "type": "array",
+                  "example": "array(1,5,7)",
+                  "description": "(Optional) - Offer Tags"
+                },
+                "target_country": {
+                  "type": "integer",
+                  "example": "15",
+                  "description": "(Optional) - Targeted Country ID"
+                },
+                "display_full_name": {
+                  "type": "integer",
+                  "example": "0",
+                  "description": "(Optional) - 0:No, 1:Yes"
+                }
+              }
+            }
+          }
+        ],
+        "responses": {
+          "400": {
+            "description": "Bad Request"
+          },
+          "422": {
+            "description": "Invalid input"
+          }
+        }
+      }
+    },
   },
   "definitions": {
     
