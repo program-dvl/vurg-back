@@ -35,7 +35,7 @@ Route::get('countries', 'App\Http\Controllers\User\CountryController@index');
 // Get All Settings
 Route::get('settings', 'App\Http\Controllers\User\SettingsController@index');
 
-Route::middleware(['auth:sanctum', 'lastActivity'])->group(function () {
+Route::middleware(['auth:api', 'lastActivity'])->group(function () {
     // Route::get('user', 'App\Http\Controllers\User\UserController@index');
     Route::get('email/resend', 'App\Http\Controllers\Auth\VerificationController@resend')->name('verification.resend');
     Route::post('otp/send', 'App\Http\Controllers\Auth\VerificationController@sendOTP')->name('verify.otp');

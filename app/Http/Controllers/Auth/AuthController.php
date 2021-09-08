@@ -113,22 +113,79 @@ class AuthController extends Controller
         }
 
         $credentials = $request->only('email', 'password');
-        
-        if (Auth::attempt($credentials)) {
-            $request->session()->regenerate();
-            $user = $this->userRepository->userDetailsByEmail($request->email);
-            // Set response data
-            $apiStatus = Response::HTTP_OK;
-            $apiMessage = 'User logged in successfully.';
-            $apiData = $user->toArray();
 
-            return $this->sendSuccess($apiData, $apiMessage, $apiStatus);
+        if (!$token = auth('api')->attempt($credentials)) {
+            return response()->json(['error' => 'Unauthorized'], 401);
         }
 
-        // Set response data
-        $apiStatus = Response::HTTP_NOT_FOUND;
-        $apiMessage = 'The provided credentials do not match our records.';
+        $user = $this->userRepository->userDetailsByEmail($request->email);
+        return $this->SendSuccess($this->respondWithToken($token, $user));
+        
+        // sanctum Login 
+        // if (Auth::attempt($credentials)) {
+        //     $request->session()->regenerate();
+        //     $user = $this->userRepository->userDetailsByEmail($request->email);
+        //     // Set response data
+        //     $apiStatus = Response::HTTP_OK;
+        //     $apiMessage = 'User logged in successfully.';
+        //     $apiData = $user->toArray();
 
-        return $this->sendError($apiMessage, $apiStatus);
+        //     return $this->sendSuccess($apiData, $apiMessage, $apiStatus);
+        // }
+
+        // // Set response data
+        // $apiStatus = Response::HTTP_NOT_FOUND;
+        // $apiMessage = 'The provided credentials do not match our records.';
+
+        // return $this->sendError($apiMessage, $apiStatus);
     }
+
+    /**
+     * Get the authenticated User.
+     *
+     * @return \Illuminate\Http\JsonResponse
+     */
+    public function me()
+    {
+        return $this->sendSuccess(auth('api')->user());
+    }
+
+    /**
+     * Log the user out (Invalidate the token).
+     *
+     * @return \Illuminate\Http\JsonResponse
+     */
+    public function logout()
+    {
+        auth('api')->logout();
+
+        return $this->sendSuccess([],'Successfully logged out');
+    }
+
+    /**
+     * Refresh a token.
+     *
+     * @return \Illuminate\Http\JsonResponse
+     */
+    public function refresh()
+    {
+        return $this->respondWithToken(auth('api')->refresh(), auth('api')->user());
+    }
+
+    /**
+     * Get the token array structure.
+     *
+     * @param  string $token
+     *
+     * @return \Illuminate\Http\JsonResponse
+     */
+    protected function respondWithToken($token, $user)
+    {
+        $data['user'] = $user->toArray();
+        $data['token']['access_token'] = $token;
+        $data['token']['token_type'] = 'bearer';
+        // $data['token']['expires_in'] = auth('api')->factory()->getTTL() * 60;
+        return $data;
+    }
+
 }
