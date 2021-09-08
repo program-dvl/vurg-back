@@ -57,6 +57,7 @@ class AuthController extends Controller
         $this->responseHelper = $responseHelper;
         $this->authRepository = $authRepository;
         $this->userRepository = $userRepository;
+        $this->middleware('auth:api', ['except' => ['login', 'refresh', 'logout']]);
     }
 
     public function register(Request $request): JsonResponse
@@ -154,10 +155,9 @@ class AuthController extends Controller
      *
      * @return \Illuminate\Http\JsonResponse
      */
-    public function logout()
+    public function logout(Request $request)
     {
-        auth('api')->logout();
-
+        Auth::guard('api')->logout();
         return $this->sendSuccess([],'Successfully logged out');
     }
 
