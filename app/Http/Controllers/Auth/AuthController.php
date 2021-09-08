@@ -181,8 +181,8 @@ class AuthController extends Controller
     protected function respondWithToken($token, $user)
     {
         $data['user'] = $user->toArray();
-        $data['token']['access_token'] = $token;
-        $data['token']['token_type'] = 'bearer';
+        $data['token'] = $token;
+        // $data['token'] = 'bearer';
         // $data['token']['expires_in'] = auth('api')->factory()->getTTL() * 60;
         return $data;
     }
