@@ -65,6 +65,26 @@
         }
       }
     },
+    "/logout": {
+      "post": {
+        "operationId": "POST-vurg-customer-logout",
+        "summary": "User Logout API",
+        "tags": [
+          "Authentication"
+        ],
+        "consumes": [
+          "application/json"
+        ],
+        "responses": {
+          "400": {
+            "description": "Bad Request"
+          },
+          "422": {
+            "description": "Invalid input"
+          }
+        }
+      }
+    },
     "/contactus": {
       "post": {
         "operationId": "POST-contactus",
@@ -534,7 +554,7 @@
         }
       }
     },
-    "/get/profile": {
+    "/profile": {
       "get": {
         "operationId": "GET-profile",
         "summary": "Get Logged In User profile",
