@@ -33,16 +33,31 @@ class WalletRepository
      */
     public function getUserWallets(): array
     {
-        $userWallet = $this->userWallet->where('user_id', Auth::id())->latest('created_at')->first();
-        $bitgo = new BitGoSDK(env('BITGO_ACCESS_TOKEN'), CurrencyCode::BITCOIN_TESTNET, true);
-        $bitgo->walletId = $userWallet->wallet_id;
-        $wallet = $bitgo->getWallet(CurrencyCode::BITCOIN_TESTNET, 'Bitcoin');
+        $allWallets = [];
+        $allCoins = $this->allCoins();
+        foreach ($allCoins as $key => $coin) {
+            $wallet = $this->userWallet->where('user_id', Auth::id())->where('coin_id', $coin['coin_vurg_id'])->latest('created_at')->first();
+            if (!empty($wallet)) {
+                $bitgo = new BitGoSDK(env('BITGO_ACCESS_TOKEN'), $coin['id'], true);
+                $bitgo->walletId = $wallet->wallet_id;
+                $wallet = $bitgo->getWallet($coin['id']);
+                $allWallets[$coin['id']] = [
+                    'walletName' => $wallet['label'],
+                    'coin' => $wallet['coin'],
+                    'balance' => $wallet['balance'],
+                    'address' => $wallet['receiveAddress']['address']
+                ];
+            }
+        }
+        return $allWallets;
+    }
+
+    public function allCoins() {
         return [
             [
-                'walletName' => $wallet['label'],
-                'coin' => $wallet['coin'],
-                'balance' => $wallet['balance'],
-                'address' => $wallet['receiveAddress']['address']
+                'id' => CurrencyCode::BITCOIN_TESTNET,
+                'name' => 'Bitcoin',
+                'coin_vurg_id' => 1
             ]
         ];
     }

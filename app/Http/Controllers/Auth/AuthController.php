@@ -79,7 +79,6 @@ class AuthController extends Controller
         $requestData = [
             'password' => Hash::make($request->password),
             'email' => $request->email,
-            'name' => $request->name,
             'username' => substr(str_replace(' ','',strtolower($request->name)), 0, 5).rand(1,100000)
         ];
 

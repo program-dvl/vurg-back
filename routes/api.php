@@ -18,6 +18,7 @@ use Illuminate\Support\Facades\Route;
 //     return $request->user();
 // });
 Route::post('login', 'App\Http\Controllers\Auth\AuthController@login');
+
 Route::post('register', 'App\Http\Controllers\Auth\AuthController@register');
 Route::get('email/verify/{id}', 'App\Http\Controllers\Auth\VerificationController@verify')->name('verification.verify');
 
@@ -52,7 +53,11 @@ Route::middleware(['auth:sanctum'])->group(function () {
     Route::post('profile/update', 'App\Http\Controllers\User\UserController@updateProfile');
 
     // Get user wallets
-    Route::get('wallet', 'App\Http\Controllers\Wallet\WalletController@index');
+    Route::get('wallets', 'App\Http\Controllers\Wallet\WalletController@index');
+    
+    // Get supported
+    Route::get('coins', 'App\Http\Controllers\Wallet\WalletController@allCoins');
+    Route::post('logout', 'App\Http\Controllers\Auth\AuthController@logout');
 });
 
 Route::get('express', 'App\Http\Controllers\User\UserController@express');

@@ -27,7 +27,7 @@ class WalletController extends Controller
     
     /**
      * Display a wallets
-     * POST|HEAD /contactus
+     * GET|HEAD /wallets
      *
      * @param Request $request
      * @return Response
@@ -38,6 +38,24 @@ class WalletController extends Controller
         try {
             $wallets = $this->walletRepository->getUserWallets();
             return $this->sendSuccess($wallets, 'Wallets listed succcessfully');
+        } catch (\Exception $e) { dd($e->getMessage());
+            return $this->sendError();
+        }
+    }
+
+    /**
+     * List all supported coins
+     * GET|HEAD /coins
+     *
+     * @param Request $request
+     * @return Response
+     */
+
+    public function allCoins(Request $request)
+    {
+        try {
+            $wallets = $this->walletRepository->allCoins();
+            return $this->sendSuccess($wallets, 'Coins listed succcessfully');
         } catch (\Exception $e) {
             return $this->sendError();
         }
