@@ -57,7 +57,7 @@ class AuthController extends Controller
         $this->responseHelper = $responseHelper;
         $this->authRepository = $authRepository;
         $this->userRepository = $userRepository;
-        $this->middleware('auth:api', ['except' => ['login', 'refresh', 'logout']]);
+        $this->middleware('auth:api', ['except' => ['login', 'refresh', 'logout', 'register']]);
     }
 
     public function register(Request $request): JsonResponse
@@ -115,7 +115,12 @@ class AuthController extends Controller
         $credentials = $request->only('email', 'password');
 
         if (!$token = auth('api')->attempt($credentials)) {
-            return response()->json(['error' => 'Unauthorized'], 401);
+         //   return response()->json(['error' => 'Unauthorized'], 401);
+                // Set response data
+            $apiStatus = Response::HTTP_NOT_FOUND;
+            $apiMessage = 'The provided credentials do not match our records.';
+
+            return $this->sendError($apiMessage, $apiStatus);
         }
 
         $user = $this->userRepository->userDetailsByEmail($request->email);
