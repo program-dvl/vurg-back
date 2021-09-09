@@ -57,7 +57,7 @@ class AuthController extends Controller
         $this->responseHelper = $responseHelper;
         $this->authRepository = $authRepository;
         $this->userRepository = $userRepository;
-        $this->middleware('auth:api', ['except' => ['login', 'refresh', 'logout']]);
+        $this->middleware('auth:api', ['except' => ['login', 'refresh', 'logout', 'register']]);
     }
 
     public function register(Request $request): JsonResponse
