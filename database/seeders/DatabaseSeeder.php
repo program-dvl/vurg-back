@@ -22,7 +22,9 @@ class DatabaseSeeder extends Seeder
             SettingSeeder::class,
             OfferTagsSeeder::class,
             PaymentMethodCategorySeeder::class,
-            PaymentMethodsSeeder::class
+            PaymentMethodsSeeder::class,
+            OfferSeeder::class,
+            OfferFeedbackSeeder::class
         ]);
     }
 }
