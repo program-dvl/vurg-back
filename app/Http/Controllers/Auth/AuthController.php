@@ -75,11 +75,13 @@ class AuthController extends Controller
         if ($validator->fails()) {
             return $this->sendValidationError($validator->messages());
         }
-        
+        $name = explode(" ", $request->name);
         $requestData = [
             'password' => Hash::make($request->password),
             'email' => $request->email,
-            'username' => substr(str_replace(' ','',strtolower($request->name)), 0, 5).rand(1,100000)
+            'username' => substr(str_replace(' ','',strtolower($request->name)), 0, 5).rand(1,100000),
+            'firstname' => $name[0],
+            'lastname' => $name[1] ?? null
         ];
 
         // Store user
@@ -87,7 +89,9 @@ class AuthController extends Controller
 
         event(new Registered($user));
 
-        Auth::login($user);
+        //$token = auth('api')->attempt($credentials);
+
+       // Auth::login($user);
 
         // Set response data
         $apiStatus = Response::HTTP_OK;
