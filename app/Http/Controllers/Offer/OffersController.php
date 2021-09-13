@@ -13,6 +13,7 @@ use Illuminate\Http\Response;
 use Validator;
 use App\Repositories\Offer\OfferRepository;
 use App\Repositories\User\UserRepository;
+use App\Repositories\Offer\OfferTradeFeedbackRepository;
 
 class OffersController extends Controller
 {
@@ -24,11 +25,14 @@ class OffersController extends Controller
     public function __construct(
         Request $request,
         OfferRepository $offerRepository,
-        UserRepository $userRepository
+        UserRepository $userRepository,
+        OfferTradeFeedbackRepository $offerTradeFeedbackRepository
     ) {
         $this->request = $request;
         $this->offerRepository = $offerRepository;
         $this->userRepository = $userRepository;
+        $this->offerTradeFeedbackRepository = $offerTradeFeedbackRepository;
+        
     }
     
     /**
@@ -179,5 +183,11 @@ class OffersController extends Controller
             $offers = $this->offerRepository->changeOfferStatus(Auth::id(),['status' => $input['status']]);
         }
         return $this->sendSuccess([], 'Offer status changed successfully');
+    }
+
+    public function viewFeedbackByOfferId(Request $request, $offerId)
+    {
+        $offers = $this->offerTradeFeedbackRepository->getOfferFeedbackByOfferId($offerId);
+        return $this->sendSuccess($offers, 'Feedback fetched successfully.');
     }
 }

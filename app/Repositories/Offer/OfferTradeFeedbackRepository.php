@@ -35,4 +35,8 @@ class OfferTradeFeedbackRepository
         return $offers;
     }
 
+    public function getOfferFeedbackByOfferId($offerId) {
+        return OfferTradeFeedback::with(['userDetails'])->where("offer_id", $offerId)->get();
+    }
+
 }

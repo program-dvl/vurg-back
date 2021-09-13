@@ -65,6 +65,8 @@ Route::middleware(['auth:api', 'lastActivity'])->group(function () {
     Route::get('offer/{id}', 'App\Http\Controllers\Offer\OffersController@viewOffer');
     // CHange Offer Status
     Route::post('offer/change/status', 'App\Http\Controllers\Offer\OffersController@changeOfferStatus');
+    // View Offer
+    Route::get('offer/feedback/{id}', 'App\Http\Controllers\Offer\OffersController@viewFeedbackByOfferId');
 
     // Get Feedback
     Route::post('feedback', 'App\Http\Controllers\Offer\OfferTradeFeedbackController@index');

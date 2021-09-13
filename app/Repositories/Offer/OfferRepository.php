@@ -81,5 +81,4 @@ class OfferRepository
     public function changeOfferStatus($userId, $status) {
         return Offers::where('user_id', $userId)->update($status);
     }
-
 }

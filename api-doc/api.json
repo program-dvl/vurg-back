@@ -1052,6 +1052,23 @@
           }
         }
       }
+    },
+    "/offer/feedback/{id}": {
+      "get": {
+        "operationId": "GET-offer-feedback-by-offer-id",
+        "summary": "Get Offer feedback by offer id",
+        "tags": [
+          "Create Offer"
+        ],
+        "consumes": [
+          "application/json"
+        ],
+        "responses": {
+          "400": {
+            "description": "Bad Request"
+          }
+        }
+      }
     }
   },
   "definitions": {
