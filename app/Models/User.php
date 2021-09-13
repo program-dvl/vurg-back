@@ -41,7 +41,9 @@ class User extends Authenticatable implements MustVerifyEmail, JWTSubject
         'bio',
         'preferred_currency',
         'user_timezone',
-        'display_name'
+        'display_name',
+        'firstname',
+        'lastname'
     ];
 
     /**
