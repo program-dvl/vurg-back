@@ -272,10 +272,17 @@ class UserController extends Controller
     public function add() {
        
         //$bitgo->walletId = 'YOUR_WALLET_ID_HERE';
-        $bitgo = new BitGoSDK('e6a82b81237b2f0b83f82c5fbea307944c425a6c21065eb03a0908bbe6770e43', 'tbtc', true);
-        $createAddress = $bitgo->createWallet(CurrencyCode::BITCOIN, 'Bitcoin');
+        // $bitgo = new BitGoSDK('v2x3c0987c2b9948dfdac805a5fc88cec8f654be915a285474e6230be5bae47ad2e', 'tbtc', true);
+        // $createAddress = $bitgo->createWallet(CurrencyCode::BITCOIN, 'Bitcoin');
         // dd($createAddress);
- 
+
+        $hostname = 'localhost';
+        $port = 3080;
+        $coin = CurrencyCode::BITCOIN_TESTNET; 
+        $bitgoExpress = new BitGoExpress($hostname, $port, $coin);
+        $bitgoExpress->accessToken = 'v2x3c0987c2b9948dfdac805a5fc88cec8f654be915a285474e6230be5bae47ad2e';
+        $generateWallet = $bitgoExpress->generateWallet('Vurg_Coin','string');
+ dd($generateWallet);
         //$hostname = 'app.bitgo-test.com';
         // $hostname = 'app.bitgo-test.com';
         // $port = 3080;
@@ -287,7 +294,7 @@ class UserController extends Controller
         // // //$bitgo->walletId = 'YOUR_WALLET_ID_HERE';
         
         // $createAddress = $bitgo->addWallet('Bitcoin', 2, 3, []);
-        dd($createAddress);
+     //   dd($createAddress);
     }
  
     public function express() {
@@ -296,7 +303,7 @@ class UserController extends Controller
         $coin = CurrencyCode::BITCOIN_TESTNET;
  
         $bitgoExpress = new BitGoExpress($hostname, $port, $coin);
-        $bitgoExpress->accessToken = 'd80089ee537b24f8635af24bf9de7b074aab7145d9c5ed1ac6fad9d08faf6719';
+        $bitgoExpress->accessToken = 'v2x3c0987c2b9948dfdac805a5fc88cec8f654be915a285474e6230be5bae47ad2e';
         $keyChain = $bitgoExpress->createKeychain();
         dd($keyChain);
         //$generateWallet = $bitgoExpress->generateWallet('LABEL_HERE', 'CREATE_A_NEW_PASSPHRASE_HERE');

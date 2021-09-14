@@ -18,7 +18,6 @@ use Illuminate\Support\Facades\Route;
 //     return $request->user();
 // });
 Route::post('login', 'App\Http\Controllers\Auth\AuthController@login');
-Route::post('logout', 'App\Http\Controllers\Auth\AuthController@logout');
 Route::post('register', 'App\Http\Controllers\Auth\AuthController@register');
 Route::get('email/verify/{id}', 'App\Http\Controllers\Auth\VerificationController@verify')->name('verification.verify');
 
@@ -77,8 +76,17 @@ Route::middleware(['auth:api', 'lastActivity'])->group(function () {
     // Get Payment methods
     Route::get('offer/paymentMethod', 'App\Http\Controllers\Offer\OffersController@getPaymentMethods');
 
+    // Get user wallets
+    Route::get('wallets', 'App\Http\Controllers\Wallet\WalletController@index');
+
+    // Get coin address
+    Route::get('address/{coinId}', 'App\Http\Controllers\Wallet\WalletController@getAddress');
+    
+    // Get supported
+    Route::get('coins', 'App\Http\Controllers\Wallet\WalletController@allCoins');
+    Route::post('logout', 'App\Http\Controllers\Auth\AuthController@logout');
     
 });
-
+Route::get('express', 'App\Http\Controllers\User\UserController@express');
 // Route::get('wallet', 'App\Http\Controllers\User\UserController@add');
 // Route::get('express', 'App\Http\Controllers\User\UserController@express');
