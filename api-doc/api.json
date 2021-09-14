@@ -689,7 +689,7 @@
                 "offer_type": {
                   "type": "integer",
                   "example": "1",
-                  "description": "1:Buyer, 2:Seller"
+                  "description": "0:All, 1:Buyer, 2:Seller"
                 },
                 "feedback_type": {
                   "type": "integer",
@@ -1054,7 +1054,7 @@
       }
     },
     "/offer/feedback/{id}": {
-      "get": {
+      "post": {
         "operationId": "GET-offer-feedback-by-offer-id",
         "summary": "Get Offer feedback by offer id",
         "tags": [
@@ -1062,6 +1062,23 @@
         ],
         "consumes": [
           "application/json"
+        ],
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "type": "object",
+              "properties": {
+                "feedback_type": {
+                  "type": "integer",
+                  "example": "0",
+                  "description": "0:All, 1:Positive, 2:Negative"
+                }                
+              }
+            }
+          }
         ],
         "responses": {
           "400": {

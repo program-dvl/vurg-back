@@ -187,7 +187,10 @@ class OffersController extends Controller
 
     public function viewFeedbackByOfferId(Request $request, $offerId)
     {
-        $offers = $this->offerTradeFeedbackRepository->getOfferFeedbackByOfferId($offerId);
+        $input = $request->all();
+        $feedbackType = !empty($input['feedback_type']) ? $input['feedback_type'] : 0;
+
+        $offers = $this->offerTradeFeedbackRepository->getOfferFeedbackByOfferId($offerId, $feedbackType);
         return $this->sendSuccess($offers, 'Feedback fetched successfully.');
     }
 }
