@@ -78,6 +78,9 @@ Route::middleware(['auth:api', 'lastActivity'])->group(function () {
 
     // Get user wallets
     Route::get('wallets', 'App\Http\Controllers\Wallet\WalletController@index');
+
+    // Get coin address
+    Route::get('address/{coinId}', 'App\Http\Controllers\Wallet\WalletController@getAddress');
     
     // Get supported
     Route::get('coins', 'App\Http\Controllers\Wallet\WalletController@allCoins');

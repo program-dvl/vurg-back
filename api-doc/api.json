@@ -1068,7 +1068,67 @@
           }
         }
       }
-    }
+    },
+    "/address/{coinId}": {
+      "get": {
+        "operationId": "GET-address-by-coin-id",
+        "summary": "Get address for specific coin",
+        "tags": [
+          "Wallet"
+        ],
+        "parameters": [
+          {
+            "name": "coinId",
+            "in": "path",
+            "description": "coin id",
+            "required": true,
+            "type": "string"
+          }
+        ],
+        "consumes": [
+          "application/json"
+        ],
+        "responses": {
+          "400": {
+            "description": "Bad Request"
+          }
+        }
+      }
+    },
+    "/wallets": {
+      "get": {
+        "operationId": "GET-user-wallets",
+        "summary": "Get user wallets",
+        "tags": [
+          "Wallet"
+        ],
+        "consumes": [
+          "application/json"
+        ],
+        "responses": {
+          "400": {
+            "description": "Bad Request"
+          }
+        }
+      }
+    },
+    "/coins": {
+      "get": {
+        "operationId": "GET-coins",
+        "summary": "Get list of vurg supported coins",
+        "tags": [
+          "Wallet"
+        ],
+        "consumes": [
+          "application/json"
+        ],
+        "responses": {
+          "400": {
+            "description": "Bad Request"
+          }
+        }
+      }
+    },
   },
   "definitions": {
     

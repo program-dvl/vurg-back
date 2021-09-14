@@ -62,4 +62,33 @@ class WalletRepository
         ];
     }
 
+    public function getCoinAddress($id) {
+        $coins = $this->getCoin();
+        if (!empty($coins[$id])) {
+            $coin = $coins[$id];
+            $wallet = $this->userWallet->where('user_id', Auth::id())->where('coin_id', $id)->latest('created_at')->first();
+            if (!empty($wallet)) {
+                $bitgo = new BitGoSDK(env('BITGO_ACCESS_TOKEN'), $coin['id'], true);
+                $bitgo->walletId = $wallet->wallet_id;
+                $wallet = $bitgo->getWallet($coin['id']);
+                return [
+                    'coin' => $wallet['coin'],
+                    'address' => $wallet['receiveAddress']['address'],
+                    'created' => $wallet['startDate'],
+                ];
+            }
+        }
+        return false;
+    }
+
+    public function getCoin() {
+        return [
+            "1" => [
+                'id' => CurrencyCode::BITCOIN_TESTNET,
+                'name' => 'Bitcoin',
+                'coin_vurg_id' => 1
+            ]
+        ];
+    }
+
 }

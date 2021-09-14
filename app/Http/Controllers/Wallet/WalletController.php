@@ -60,4 +60,27 @@ class WalletController extends Controller
             return $this->sendError();
         }
     }
+
+    /**
+     * Get a address
+     * GET|HEAD /address/{id}
+     *
+     * @param Request $request
+     * @return Response
+     */
+
+    public function getAddress(Request $request, $coinId)
+    {
+        try {
+            $address = $this->walletRepository->getCoinAddress($coinId);
+            if (!$address) {
+                $apiStatus = Response::HTTP_NOT_FOUND;
+                $apiMessage = 'Address not found';
+                return $this->sendError($apiMessage, $apiStatus);
+            }
+            return $this->sendSuccess($address, 'Address found succcessfully');
+        } catch (\Exception $e) { 
+            return $this->sendError();
+        }
+    }
 }

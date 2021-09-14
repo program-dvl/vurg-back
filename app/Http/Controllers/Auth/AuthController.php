@@ -88,7 +88,7 @@ class AuthController extends Controller
         // Store user
         $user = $this->authRepository->store($requestData);
 
-      //  event(new Registered($user));
+        event(new Registered($user));
 
         //$token = auth('api')->attempt($credentials);
 
