@@ -58,6 +58,7 @@ class AuthController extends Controller
         $this->responseHelper = $responseHelper;
         $this->authRepository = $authRepository;
         $this->userRepository = $userRepository;
+        $this->middleware('auth:api', ['except' => ['login', 'refresh', 'logout', 'register']]);
     }
 
     public function register(Request $request): JsonResponse
@@ -75,11 +76,13 @@ class AuthController extends Controller
         if ($validator->fails()) {
             return $this->sendValidationError($validator->messages());
         }
-        
+        $name = explode(" ", $request->name);
         $requestData = [
             'password' => Hash::make($request->password),
             'email' => $request->email,
-            'username' => substr(str_replace(' ','',strtolower($request->name)), 0, 5).rand(1,100000)
+            'username' => substr(str_replace(' ','',strtolower($request->name)), 0, 5).rand(1,100000),
+            'firstname' => $name[0],
+            'lastname' => $name[1] ?? null
         ];
 
         // Store user
@@ -87,7 +90,9 @@ class AuthController extends Controller
 
       //  event(new Registered($user));
 
-        Auth::login($user);
+        //$token = auth('api')->attempt($credentials);
+
+       // Auth::login($user);
 
         // Generate wallets 
         event(new GenerateWallet($user));
@@ -116,22 +121,83 @@ class AuthController extends Controller
         }
 
         $credentials = $request->only('email', 'password');
-        
-        if (Auth::attempt($credentials)) {
-            $request->session()->regenerate();
-            $user = $this->userRepository->userDetailsByEmail($request->email);
-            // Set response data
-            $apiStatus = Response::HTTP_OK;
-            $apiMessage = 'User logged in successfully.';
-            $apiData = $user->toArray();
 
-            return $this->sendSuccess($apiData, $apiMessage, $apiStatus);
+        if (!$token = auth('api')->attempt($credentials)) {
+         //   return response()->json(['error' => 'Unauthorized'], 401);
+                // Set response data
+            $apiStatus = Response::HTTP_NOT_FOUND;
+            $apiMessage = 'The provided credentials do not match our records.';
+
+            return $this->sendError($apiMessage, $apiStatus);
         }
 
-        // Set response data
-        $apiStatus = Response::HTTP_NOT_FOUND;
-        $apiMessage = 'The provided credentials do not match our records.';
+        $user = $this->userRepository->userDetailsByEmail($request->email);
+        return $this->SendSuccess($this->respondWithToken($token, $user));
+        
+        // sanctum Login 
+        // if (Auth::attempt($credentials)) {
+        //     $request->session()->regenerate();
+        //     $user = $this->userRepository->userDetailsByEmail($request->email);
+        //     // Set response data
+        //     $apiStatus = Response::HTTP_OK;
+        //     $apiMessage = 'User logged in successfully.';
+        //     $apiData = $user->toArray();
 
-        return $this->sendError($apiMessage, $apiStatus);
+        //     return $this->sendSuccess($apiData, $apiMessage, $apiStatus);
+        // }
+
+        // // Set response data
+        // $apiStatus = Response::HTTP_NOT_FOUND;
+        // $apiMessage = 'The provided credentials do not match our records.';
+
+        // return $this->sendError($apiMessage, $apiStatus);
     }
+
+    /**
+     * Get the authenticated User.
+     *
+     * @return \Illuminate\Http\JsonResponse
+     */
+    public function me()
+    {
+        return $this->sendSuccess(auth('api')->user());
+    }
+
+    /**
+     * Log the user out (Invalidate the token).
+     *
+     * @return \Illuminate\Http\JsonResponse
+     */
+    public function logout(Request $request)
+    {
+        Auth::guard('api')->logout();
+        return $this->sendSuccess([],'Successfully logged out');
+    }
+
+    /**
+     * Refresh a token.
+     *
+     * @return \Illuminate\Http\JsonResponse
+     */
+    public function refresh()
+    {
+        return $this->respondWithToken(auth('api')->refresh(), auth('api')->user());
+    }
+
+    /**
+     * Get the token array structure.
+     *
+     * @param  string $token
+     *
+     * @return \Illuminate\Http\JsonResponse
+     */
+    protected function respondWithToken($token, $user)
+    {
+        $data['user'] = $user->toArray();
+        $data['token'] = $token;
+        // $data['token'] = 'bearer';
+        // $data['token']['expires_in'] = auth('api')->factory()->getTTL() * 60;
+        return $data;
+    }
+
 }

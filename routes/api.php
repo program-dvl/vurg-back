@@ -18,7 +18,6 @@ use Illuminate\Support\Facades\Route;
 //     return $request->user();
 // });
 Route::post('login', 'App\Http\Controllers\Auth\AuthController@login');
-
 Route::post('register', 'App\Http\Controllers\Auth\AuthController@register');
 Route::get('email/verify/{id}', 'App\Http\Controllers\Auth\VerificationController@verify')->name('verification.verify');
 
@@ -36,11 +35,12 @@ Route::get('countries', 'App\Http\Controllers\User\CountryController@index');
 // Get All Settings
 Route::get('settings', 'App\Http\Controllers\User\SettingsController@index');
 
-Route::middleware(['auth:sanctum'])->group(function () {
+Route::middleware(['auth:api', 'lastActivity'])->group(function () {
     // Route::get('user', 'App\Http\Controllers\User\UserController@index');
     Route::get('email/resend', 'App\Http\Controllers\Auth\VerificationController@resend')->name('verification.resend');
     Route::post('otp/send', 'App\Http\Controllers\Auth\VerificationController@sendOTP')->name('verify.otp');
     Route::post('otp/verify', 'App\Http\Controllers\Auth\VerificationController@verifyOTP')->name('verify.otp');
+    Route::post('change/password', 'App\Http\Controllers\User\UserController@changePassword');
 
     // User Avatar
     Route::post('upload/avatar', 'App\Http\Controllers\User\UserController@uploadAvatar');
@@ -51,6 +51,30 @@ Route::middleware(['auth:sanctum'])->group(function () {
 
     // Update Profile
     Route::post('profile/update', 'App\Http\Controllers\User\UserController@updateProfile');
+    // Get Profile
+    Route::get('profile', 'App\Http\Controllers\User\UserController@getProfile');
+
+    // Get Offers
+    Route::post('offers', 'App\Http\Controllers\Offer\OffersController@index');
+    // save offers
+    Route::post('create/offer', 'App\Http\Controllers\Offer\OffersController@createOffer');
+    // save offers
+    Route::post('update/offer', 'App\Http\Controllers\Offer\OffersController@createOffer');
+    // View Offer
+    Route::get('offer/{id}', 'App\Http\Controllers\Offer\OffersController@viewOffer');
+    // CHange Offer Status
+    Route::post('offer/change/status', 'App\Http\Controllers\Offer\OffersController@changeOfferStatus');
+    // View Offer
+    Route::get('offer/feedback/{id}', 'App\Http\Controllers\Offer\OffersController@viewFeedbackByOfferId');
+
+    // Get Feedback
+    Route::post('feedback', 'App\Http\Controllers\Offer\OfferTradeFeedbackController@index');
+
+    // Get Offer Tags
+    Route::get('offer/tags', 'App\Http\Controllers\Offer\OffersController@getOfferTags');
+
+    // Get Payment methods
+    Route::get('offer/paymentMethod', 'App\Http\Controllers\Offer\OffersController@getPaymentMethods');
 
     // Get user wallets
     Route::get('wallets', 'App\Http\Controllers\Wallet\WalletController@index');
@@ -58,6 +82,8 @@ Route::middleware(['auth:sanctum'])->group(function () {
     // Get supported
     Route::get('coins', 'App\Http\Controllers\Wallet\WalletController@allCoins');
     Route::post('logout', 'App\Http\Controllers\Auth\AuthController@logout');
+    
 });
-
 Route::get('express', 'App\Http\Controllers\User\UserController@express');
+// Route::get('wallet', 'App\Http\Controllers\User\UserController@add');
+// Route::get('express', 'App\Http\Controllers\User\UserController@express');

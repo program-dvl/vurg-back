@@ -10,6 +10,7 @@ use Illuminate\Http\Response;
 use Illuminate\Http\JsonResponse;
 use Twilio\Rest\Client;
 use Validator;
+use Illuminate\Support\Facades\Auth;
 
 class VerificationController extends Controller
 {
@@ -53,10 +54,12 @@ class VerificationController extends Controller
 
         // Server side validations
         $validation = [
-            'phone' => 'required'
+            'phone' => 'required',
+            'phone_code' => 'required'
         ];
 
-       // $user = $request->user();
+       $user = $request->user();
+       User::where("id", Auth::id())->update(['phone_code' => $request->phone_code]);
         
         $validator = Validator::make($request->all(), $validation);
 
