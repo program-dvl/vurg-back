@@ -61,8 +61,9 @@ class OffersController extends Controller
 
             $offerType = $input['offer_type'];
             $currencyType = !empty($input['currency_type']) ? $input['currency_type'] : 0;
+            $userId = !empty($input['user_id']) ? $input['user_id'] : Auth::id();
 
-            $offers = $this->offerRepository->getOfferDetails(Auth::id(), $offerType, $currencyType, $skip, $take);
+            $offers = $this->offerRepository->getOfferDetails($userId, $offerType, $currencyType, $skip, $take);
             return $this->sendSuccess($offers, 'Offers fetched successfully.');
         } catch (\Exception $e) {
             dd($e->getMessage());
@@ -192,5 +193,50 @@ class OffersController extends Controller
 
         $offers = $this->offerTradeFeedbackRepository->getOfferFeedbackByOfferId($offerId, $feedbackType);
         return $this->sendSuccess($offers, 'Feedback fetched successfully.');
+    }
+
+    public function getAllByOrSellOffers(Request $request) {
+        try {
+            $input = $request->all();
+            $rules = [
+                'page_number' => 'required|numeric|min:1',
+                'per_page' => 'required|numeric|min:1',
+            ];
+            $validator = Validator::make($request->all(), $rules);
+            if ($validator->fails()) {
+                return $this->sendValidationError($validator->messages());
+            }
+
+            $skip = ($input['page_number'] - 1) * $input['per_page'];
+            $take = 500;
+
+            $offers = $this->offerRepository->getAllOffers($input, $skip, $take);
+            return $this->sendSuccess($offers, 'Offers fetched successfully.');
+        } catch (\Exception $e) {
+            dd($e->getMessage());
+            return $this->sendError();
+        }
+    }
+
+    public function addToFavourite(Request $request) {
+        try {
+            $input = $request->all();
+            $this->offerRepository->addToFavourite($input['offer_id'], Auth::id());
+            return $this->sendSuccess([], 'Offers added in favourite.');
+        } catch (\Exception $e) {
+            dd($e->getMessage());
+            return $this->sendError();
+        }
+    }
+
+    public function removeFavourite(Request $request) {
+        try {
+            $input = $request->all();
+            $this->offerRepository->removeFromFavourite($input['offer_id'], Auth::id());
+            return $this->sendSuccess([], 'Offers removed from favourite.');
+        } catch (\Exception $e) {
+            dd($e->getMessage());
+            return $this->sendError();
+        }
     }
 }

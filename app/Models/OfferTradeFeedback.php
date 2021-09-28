@@ -21,12 +21,11 @@ class OfferTradeFeedback extends Model
         return $this->belongsTo('App\Models\Offers','offer_id');
     }
 
-    public function userDetails() {
-        if($this->from_buyer == Auth::id()) {
-            return $this->belongsTo('App\Models\User','from_buyer');
-        } else {
-            return $this->belongsTo('App\Models\User','from_seller');
-        }
-        
+    public function fromBuyerDetails() {
+        return $this->belongsTo('App\Models\User','from_buyer');
+    }
+
+    public function fromSellerDetails() {
+        return $this->belongsTo('App\Models\User','from_seller');
     }
 }

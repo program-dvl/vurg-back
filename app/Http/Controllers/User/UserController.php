@@ -223,10 +223,11 @@ class UserController extends Controller
         }        
     }
 
-    public function getProfile(Request $request)
+    public function getProfile(Request $request, $userId = 0)
     {
         try {
-            $user = $this->userRepository->userDetailsForProfile(Auth::id());
+            $userId = !empty($userId) ? $userId : Auth::id();
+            $user = $this->userRepository->userDetailsForProfile($userId);
             return $this->sendSuccess($user, 'Profile fetched sucessfully');
         } catch (\Exception $e) {
             dd($e->getMessage());

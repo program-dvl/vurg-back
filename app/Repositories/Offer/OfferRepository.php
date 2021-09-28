@@ -5,8 +5,10 @@ namespace App\Repositories\Offer;
 use App\Models\Offers;
 use App\Models\OfferTags;
 use App\Models\UserOfferTags;
+use App\Models\OfferFavourite;
 use App\Models\PaymentMethods;
 use App\Models\PaymentMethodCategory;
+use Illuminate\Support\Facades\Auth;
 
 class OfferRepository
 {
@@ -80,5 +82,106 @@ class OfferRepository
 
     public function changeOfferStatus($userId, $status) {
         return Offers::where('user_id', $userId)->update($status);
+    }
+
+    /**
+     * get offer details.
+     *
+     * @param int $userId
+     */
+    public function getAllOffers($input, $skip, $take)
+    {
+        $offers = Offers::with(['userDetails', 'paymentMethod', 'preferredCurrency', 'targetCountry', 'offerTags'])->where("user_id", '!=',Auth::id());
+        
+        // Check By or Sell
+        if(!empty($input['offer_type'])) {
+            $offers->where('offer_type', $input['offer_type']);
+        }
+
+        //Check Crpto currency type
+        if(!empty($input['currency_type'])) {
+            $offers->where('cryptocurreny_type', $input['currency_type']);
+        }
+
+        //Check Payment Method
+        if(!empty($input['payment_method'])) {
+            $offers->where('payment_method', $input['payment_method']);
+        }
+
+        //Check Targeted country
+        if(!empty($input['target_country'])) {
+            $offers->where('target_country', $input['target_country']);
+        }
+
+        //Check Amount and Currency
+        if(!empty($input['spend_amount']) && !empty($input['preffered_currency'])) {
+            $offers->where('minimum_offer_trade_limits', '<=',$input['spend_amount']);
+            $offers->where('maximum_offer_trade_limits', '>=',$input['spend_amount']);
+            $offers->where('preferred_currency', $input['preffered_currency']);
+        }
+
+        if($input['sort_order'] == 3) {
+            $offers->orderBy('offer_time_limit', 'ASC');
+        } else if($input['sort_order'] == 4) {
+            $offers->orderBy('offer_time_limit', 'DESC');
+        }
+        
+        if(!empty($input['offer_tags'])) {
+            $tempOffers = $offers->orderBy('id', 'DESC')->get();
+            $offers = [];
+            if(!empty($tempOffers)) {
+                foreach($tempOffers as $tempOffer) {
+                    if(!empty($tempOffer->offerTags)) {
+                        foreach($tempOffer->offerTags as $offerTag) {
+                            if(in_array($offerTag->id, $input['offer_tags'])) {
+                                $offers[] = $tempOffer;
+                            }
+                        }
+                    }
+                }
+            }
+        } else {
+            $offers = $offers->orderBy('id', 'DESC')->skip($skip)->take($take)->get();
+        }
+
+        if($input['sort_order'] == 1 || $input['sort_order'] == 2) {
+            if(!empty($offers)) {
+                foreach($offers as $offer) {
+                    $getExchangeRate = $this->getExchangeRate($offer->preferredCurrency->currency_code, $offer->minimum_offer_trade_limits);
+                    $offer->exchange_rate = $getExchangeRate;
+                    $isFavourite = OfferFavourite::where("offer_id", $offer->id)->where("user_id", Auth::id())->first();
+                    $offer->is_favourite = !empty($isFavourite) ? 1 : 0;
+                }
+
+                array_multisort(array_column($offers, 'exchange_rate'),$input['sort_order'] == 2 ? SORT_DESC : SORT_ASC, $offers);
+            }
+        } else {
+            if(!empty($offers)) {
+                foreach($offers as $offer) {
+                    $isFavourite = OfferFavourite::where("offer_id", $offer->id)->where("user_id", Auth::id())->first();
+                    $offer->is_favourite = !empty($isFavourite) ? 1 : 0;
+                }
+            }
+        }
+        
+
+        return $offers;
+    }
+
+    public function getExchangeRate($currency, $amount) {
+        $url = "https://free.currconv.com/api/v7/convert?q=".$currency."_INR&compact=ultra&apiKey=acd9e68b55b0ec097c3b";
+        $json = json_decode(file_get_contents($url), true);
+        $convertedCurrency = $currency."_INR";
+        $convertedAmount = $json[$convertedCurrency];
+
+        return $convertedAmount * $amount;
+    }
+
+    public function addToFavourite($offerId, $userId) {
+        return OfferFavourite::create(['user_id' =>$userId, 'offer_id' => $offerId]);
+    }
+
+    public function removeFromFavourite($offerId, $userId) {
+        return OfferFavourite::where(['user_id' =>$userId, 'offer_id' => $offerId])->forceDelete();
     }
 }

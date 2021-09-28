@@ -55,8 +55,9 @@ class OfferTradeFeedbackController extends Controller
 
             $offerType = $input['offer_type'];
             $feedbackType = !empty($input['feedback_type']) ? $input['feedback_type'] : 0;
+            $userId = !empty($input['user_id']) ? $input['user_id'] : Auth::id();
 
-            $offers = $this->offerTradeFeedbackRepository->getOfferFeedbackByUser($offerType, $feedbackType, $skip, $take);
+            $offers = $this->offerTradeFeedbackRepository->getOfferFeedbackByUser($userId,$offerType, $feedbackType, $skip, $take);
             return $this->sendSuccess($offers, 'Feedback fetched successfully.');
         } catch (\Exception $e) {
             dd($e->getMessage());

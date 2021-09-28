@@ -53,9 +53,12 @@ Route::middleware(['auth:api', 'lastActivity'])->group(function () {
     Route::post('profile/update', 'App\Http\Controllers\User\UserController@updateProfile');
     // Get Profile
     Route::get('profile', 'App\Http\Controllers\User\UserController@getProfile');
+    Route::get('profile/{id}', 'App\Http\Controllers\User\UserController@getProfile');
 
     // Get Offers
     Route::post('offers', 'App\Http\Controllers\Offer\OffersController@index');
+    // Get All Offers
+    Route::post('all/offers', 'App\Http\Controllers\Offer\OffersController@getAllByOrSellOffers');
     // save offers
     Route::post('create/offer', 'App\Http\Controllers\Offer\OffersController@createOffer');
     // save offers
@@ -66,6 +69,9 @@ Route::middleware(['auth:api', 'lastActivity'])->group(function () {
     Route::post('offer/change/status', 'App\Http\Controllers\Offer\OffersController@changeOfferStatus');
     // View Offer
     Route::post('offer/feedback/{id}', 'App\Http\Controllers\Offer\OffersController@viewFeedbackByOfferId');
+    //Add or Remove in Favourite
+    Route::post('offer/add/favourite', 'App\Http\Controllers\Offer\OffersController@addToFavourite');
+    Route::post('offer/remove/favourite', 'App\Http\Controllers\Offer\OffersController@removeFavourite');
 
     // Get Feedback
     Route::post('feedback', 'App\Http\Controllers\Offer\OfferTradeFeedbackController@index');
