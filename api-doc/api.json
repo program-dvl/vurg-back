@@ -22,6 +22,9 @@
     },
     {
       "name": "Create Offer"
+    },
+    {
+      "name": "Offer Listing"
     }
   ],
   "paths":{
@@ -652,7 +655,12 @@
                 "page_number": {
                   "type": "integer",
                   "example": "1"
-                }                
+                },
+                "user_id": {
+                  "type": "integer",
+                  "example": "1",
+                  "description": "(Optional) - While display particular user's offers"
+                }
               }
             }
           }
@@ -702,6 +710,11 @@
                 "page_number": {
                   "type": "integer",
                   "example": "1"
+                },
+                "user_id": {
+                  "type": "integer",
+                  "example": "1",
+                  "description": "(Optional) - While display particular user's profile's feedback"
                 }                
               }
             }
@@ -1146,6 +1159,165 @@
         }
       }
     },
+    "/profile/{id}": {
+      "get": {
+        "operationId": "GET-profile",
+        "summary": "Get User's profile",
+        "tags": [
+          "User Profile"
+        ],
+        "consumes": [
+          "application/json"
+        ],
+        "responses": {
+          "400": {
+            "description": "Bad Request"
+          }
+        }
+      }
+    },
+    "/all/offers": {
+      "post": {
+        "operationId": "POST-get-all-buy-sell-offer",
+        "summary": "Get All offers for Buy or Sell",
+        "tags": [
+          "Offer Listing"
+        ],
+        "consumes": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "type": "object",
+              "properties": {
+                "cryptocurreny_type": {
+                  "type": "integer",
+                  "example": "1",
+                  "description": "1:Bitcoin,2:Tether,3: Ethereum"
+                },
+                "offer_type": {
+                  "type": "integer",
+                  "example": "1",
+                  "description": "1:Buy,2:Sell"
+                },
+                "payment_method": {
+                  "type": "integer",
+                  "example": "15",
+                  "description": "Payment method id"
+                },
+                "spend_amount": {
+                  "type": "integer",
+                  "example": "100",
+                  "description": "Amount"
+                },
+                "preffered_currency": {
+                  "type": "integer",
+                  "example": "15",
+                  "description": "Currency id"
+                },
+                "offer_tags": {
+                  "type": "array",
+                  "example": "array(1,5,7)",
+                  "description": "Offer Tags"
+                },
+                "target_country": {
+                  "type": "integer",
+                  "example": "15",
+                  "description": "Targeted Country ID"
+                },
+                "sort_order": {
+                  "type": "integer",
+                  "example": "1",
+                  "description": "1: Price: Lowest to Highest, 2: Price: Highest to Lowest, 3: Trade Speed: Fastest to Slowest, 4: Trade Speed: Slowest to Fastest"
+                },
+                "page_number": {
+                  "type": "integer",
+                  "example": "1"
+                }
+              }
+            }
+          }
+        ],
+        "responses": {
+          "400": {
+            "description": "Bad Request"
+          },
+          "422": {
+            "description": "Invalid input"
+          }
+        }
+      }
+    },
+    "/offer/add/favourite": {
+      "post": {
+        "operationId": "GET-offer-add-to-favourite",
+        "summary": "Add offer to favourite list",
+        "tags": [
+          "Offer Listing"
+        ],
+        "consumes": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "type": "object",
+              "properties": {
+                "offer_id": {
+                  "type": "integer",
+                  "example": "1"
+                }                
+              }
+            }
+          }
+        ],
+        "responses": {
+          "400": {
+            "description": "Bad Request"
+          }
+        }
+      }
+    },
+    "/offer/remove/favourite": {
+      "post": {
+        "operationId": "GET-offer-remove-from-favourite",
+        "summary": "Remove offer from favourite list",
+        "tags": [
+          "Offer Listing"
+        ],
+        "consumes": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "type": "object",
+              "properties": {
+                "offer_id": {
+                  "type": "integer",
+                  "example": "1"
+                }                
+              }
+            }
+          }
+        ],
+        "responses": {
+          "400": {
+            "description": "Bad Request"
+          }
+        }
+      }
+    }
   },
   "definitions": {
     
