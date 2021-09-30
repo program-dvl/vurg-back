@@ -28,6 +28,10 @@ class OfferTradeFeedbackRepository
             $offers->where('from_buyer', $userId);
         } else if($offerType == 2){
             $offers->where('from_seller', $userId);
+        } else {
+            $offers->where(function($q)  use($userId) {
+                $q->where('from_seller', $userId)->orWhere('from_seller', $userId);
+            });
         }
 
         $offers = $offers->orderBy('id', 'DESC')->skip($skip)->take($take)->get();
