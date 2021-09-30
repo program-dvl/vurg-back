@@ -58,6 +58,15 @@ class OfferTradeFeedbackController extends Controller
             $userId = !empty($input['user_id']) ? $input['user_id'] : Auth::id();
 
             $offers = $this->offerTradeFeedbackRepository->getOfferFeedbackByUser($userId,$offerType, $feedbackType, $skip, $take);
+            if(!empty($offers)) {
+                foreach($offers as $offer) {
+                    if($userId == $offer->fromBuyerDetails->id) {
+                        $offer->feedback_title = "Buying - " . $offer->offer->paymentMethod->name;
+                    } else {
+                        $offer->feedback_title = "Selling - " . $offer->offer->paymentMethod->name;
+                    }
+                }
+            }
             return $this->sendSuccess($offers, 'Feedback fetched successfully.');
         } catch (\Exception $e) {
             dd($e->getMessage());

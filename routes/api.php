@@ -18,6 +18,7 @@ use Illuminate\Support\Facades\Route;
 //     return $request->user();
 // });
 Route::post('login', 'App\Http\Controllers\Auth\AuthController@login');
+Route::post('refresh', 'App\Http\Controllers\Auth\AuthController@refresh');
 Route::post('register', 'App\Http\Controllers\Auth\AuthController@register');
 Route::get('email/verify/{id}', 'App\Http\Controllers\Auth\VerificationController@verify')->name('verification.verify');
 

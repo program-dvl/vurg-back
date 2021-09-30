@@ -68,6 +68,39 @@
         }
       }
     },
+    "/refresh": {
+      "post": {
+        "operationId": "POST-vurg-refresh-token",
+        "summary": "User Refresh Token",
+        "tags": [
+          "Authentication"
+        ],
+        "consumes": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "type": "object",
+              "properties": {
+                
+              }
+            }
+          }
+        ],
+        "responses": {
+          "400": {
+            "description": "Bad Request"
+          },
+          "422": {
+            "description": "Invalid input"
+          }
+        }
+      }
+    },
     "/logout": {
       "post": {
         "operationId": "POST-vurg-customer-logout",

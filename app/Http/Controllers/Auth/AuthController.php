@@ -181,7 +181,8 @@ class AuthController extends Controller
      */
     public function refresh()
     {
-        return $this->respondWithToken(auth('api')->refresh(), auth('api')->user());
+        return $this->SendSuccess(auth('api')->refresh());
+        // return $this->respondWithToken(auth('api')->refresh(), auth('api')->user());
     }
 
     /**

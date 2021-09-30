@@ -15,7 +15,7 @@ class OfferTradeFeedbackRepository
     public function getOfferFeedbackByUser($userId, $offerType, $feedbackType = 0, $skip, $take)
     {
         
-        $offers = OfferTradeFeedback::with(['offer', 'fromBuyerDetails', 'fromSellerDetails']);
+        $offers = OfferTradeFeedback::with(['offer', 'offer.paymentMethod' ,'fromBuyerDetails', 'fromSellerDetails']);
         if(!empty($feedbackType)) {
             if($feedbackType == 1) {
                 $offers->where('positive', 1);
