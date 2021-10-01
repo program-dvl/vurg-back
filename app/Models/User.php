@@ -110,7 +110,7 @@ class User extends Authenticatable implements MustVerifyEmail, JWTSubject
     public function getAvatarFullUrlAttribute()
     {
         if(!empty($this->avatar_image)) {
-            return public_path('/user_profile') . '/' .$this->avatar_image;
+            return asset('user_profile/'.$this->avatar_image);
         }
         return null;
     }

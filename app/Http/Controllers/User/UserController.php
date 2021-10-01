@@ -97,7 +97,8 @@ class UserController extends Controller
                     }    
                 }
                 User::where('id' , Auth::id())->update(['avatar_image' => $input['imagename']]);
-                $imageUrl = public_path('/user_profile') . '/' .$input['imagename'];
+                // $imageUrl = public_path('/user_profile') . '/' .$input['imagename'];
+                $imageUrl = asset('user_profile/'.$input['imagename']);
                 return $this->sendSuccess($imageUrl, 'Avatar Image uploaded successfully');
             }
         } catch (\Exception $e) {
