@@ -1,0 +1,54 @@
+1. download and install bitwasp
+https://github.com/Bit-Wasp/bitcoin-php
+
+2. throw in the requirement
+composer require bitwasp/bitcoin
+
+3. Use this script to create a wallet
+
+<?php
+
+use BitWasp\Bitcoin\Address\AddressCreator;
+use BitWasp\Bitcoin\Address\Base58AddressInterface;
+use BitWasp\Bitcoin\Address\SegwitAddress;
+
+require __DIR__ . "/../vendor/autoload.php";
+
+// call \BitWasp\Bitcoin\Bitcoin::setNetwork to set network globally
+// or pass it into getHRP, getPrefix
+
+//$addressString = "bc1qwqdg6squsna38e46795at95yu9atm8azzmyvckulcc7kytlcckxswvvzej";
+$addressString = "3BbDtxBSjgfTRxaBUgR2JACWRukLKtZdiQ";
+
+$addrCreator = new AddressCreator();
+$address = $addrCreator->fromString($addressString);
+
+if ($address instanceof Base58AddressInterface) {
+    echo "Base58 Hash160: " . $address->getHash()->getHex().PHP_EOL;
+} else if ($address instanceof SegwitAddress) {
+    $witnessProgram = $address->getWitnessProgram();
+    echo "HRP: " . $address->getHRP().PHP_EOL;
+    echo "WP Version: " . $witnessProgram->getVersion().PHP_EOL;
+    echo "WP Program: " . $witnessProgram->getProgram()->getHex().PHP_EOL;
+    echo "Addr Program: " . $address->getHash()->getHex().PHP_EOL;
+}
+
+echo "ScriptPubKey: " . $address->getScriptPubKey()->getHex().PHP_EOL;
+
+4. Use this to send a transaction
+
+<?php
+
+require __DIR__ . "/../vendor/autoload.php";
+
+use BitWasp\Bitcoin\Address\AddressCreator;
+use BitWasp\Bitcoin\Transaction\TransactionFactory;
+
+$addrCreator = new AddressCreator();
+$transaction = TransactionFactory::build()
+    ->input('99fe5212e4e52e2d7b35ec0098ae37881a7adaf889a7d46683d3fbb473234c28', 0)
+    ->payToAddress(29890000, $addrCreator->fromString('19SokJG7fgk8iTjemJ2obfMj14FM16nqzj'))
+    ->payToAddress(100000, $addrCreator->fromString('1CzcTWMAgBNdU7K8Bjj6s6ezm2dAQfUU9a'))
+    ->get();
+
+echo $transaction->getHex() . PHP_EOL;
