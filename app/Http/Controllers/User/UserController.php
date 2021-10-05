@@ -178,7 +178,6 @@ class UserController extends Controller
         try {
             $validator = Validator::make($request->all(), [
                 'display_name' => 'required',
-                'bio' => 'required',
                 'preferred_currency' => 'required',
                 'user_timezone' => 'required',
             ]);
