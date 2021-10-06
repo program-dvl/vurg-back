@@ -46,7 +46,7 @@ class OffersController extends Controller
     public function index(Request $request)
     {
         try {
-            $input = $request->only(['page_number', 'per_page', 'currency_type', 'offer_type', 'user_id']);
+            $input = $request->all();
             $rules = [
                 'page_number' => 'required|numeric|min:1',
                 'per_page' => 'required|numeric|min:1',

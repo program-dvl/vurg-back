@@ -37,7 +37,7 @@ class OfferTradeFeedbackController extends Controller
     public function index(Request $request)
     {
         try {
-            $input = $request->only(['feedback_type' , 'offer_type', 'page_number', 'per_page', 'user_id']);
+            $input = $request->all();
             
             $validator = Validator::make($request->all(), [
                 'feedback_type' => 'required',
