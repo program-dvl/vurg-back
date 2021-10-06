@@ -3,6 +3,7 @@
 namespace App\Repositories\Offer;
 
 use App\Models\Offers;
+use App\Models\OfferViews;
 use App\Models\OfferTags;
 use App\Models\UserOfferTags;
 use App\Models\OfferFavourite;
@@ -19,7 +20,6 @@ class OfferRepository
      */
     public function getOfferDetails(int $userId, $offerType = 0, $currencyType = 0, $skip, $take)
     {
-        
         $offers = Offers::with(['offerTags', 'userDetails', 'paymentMethod', 'preferredCurrency', 'targetCountry'])->where("user_id", $userId);
         if(!empty($offerType)) {
             $offers->where('offer_type', $offerType);
@@ -78,6 +78,17 @@ class OfferRepository
     {
         $offers = Offers::with(['offerTags', 'userDetails', 'paymentMethod', 'preferredCurrency', 'targetCountry'])->where("id", $offerId)->first();
         return $offers;
+    }
+
+    public function updateViewCount($offerId) {
+        $ifExist = OfferViews::where("user_id", Auth::id())->where("offer_id", $offerId)->first();
+        if(!empty($ifExist)) {
+            return true;
+        } else {
+            OfferViews::create(['user_id' => Auth::id(), "offer_id" => $offerId]);
+            $offer = Offers::find($offerId);
+            Offers::where("id", $offerId)->update(["total_views" => $offer->total_views +1]);
+        }
     }
 
     public function changeOfferStatus($userId, $status) {
@@ -146,14 +157,23 @@ class OfferRepository
 
         if($input['sort_order'] == 1 || $input['sort_order'] == 2) {
             if(!empty($offers)) {
+                $getAllExchangeRate = $this->getNewExchangeRate();
                 foreach($offers as $offer) {
-                    $getExchangeRate = $this->getExchangeRate($offer->preferredCurrency->currency_code, $offer->minimum_offer_trade_limits);
-                    $offer->exchange_rate = $getExchangeRate;
+                    
+                    if(!empty($getAllExchangeRate)) {
+                        foreach($getAllExchangeRate as $getAllExchangeRateCuurency) {
+                            
+                            if($offer->preferredCurrency->currency_code == $getAllExchangeRateCuurency['currency']) {
+                                $offer->exchange_rate = $getAllExchangeRateCuurency['rate'] * $offer->minimum_offer_trade_limits;
+                                break;
+                            }
+                        }
+                    }
                     $isFavourite = OfferFavourite::where("offer_id", $offer->id)->where("user_id", Auth::id())->first();
                     $offer->is_favourite = !empty($isFavourite) ? 1 : 0;
                 }
-
-                array_multisort(array_column($offers, 'exchange_rate'),$input['sort_order'] == 2 ? SORT_DESC : SORT_ASC, $offers);
+                
+                array_multisort(array_column($offers->toArray(), 'exchange_rate'),$input['sort_order'] == 2 ? SORT_DESC : SORT_ASC, $offers->toArray());
             }
         } else {
             if(!empty($offers)) {
@@ -175,6 +195,12 @@ class OfferRepository
         $convertedAmount = $json[$convertedCurrency];
 
         return $convertedAmount * $amount;
+    }
+
+
+    public function getNewExchangeRate() {
+        $url = "https://api.nomics.com/v1/exchange-rates?key=656dc0785146c218932c919f5c7fdb7d798ee21a";
+        return json_decode(file_get_contents($url), true);
     }
 
     public function addToFavourite($offerId, $userId) {

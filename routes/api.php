@@ -24,6 +24,8 @@ Route::get('email/verify/{id}', 'App\Http\Controllers\Auth\VerificationControlle
 
 Route::post('contactus', 'App\Http\Controllers\User\ContactUsController@store');
 
+Route::get('get_exchange_rate', 'App\Http\Controllers\Auth\AuthController@getNewExchangeRate');
+
 // Get All Timezones
 Route::get('timezones', 'App\Http\Controllers\User\TimezoneController@index');
 

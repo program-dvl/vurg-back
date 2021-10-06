@@ -58,7 +58,7 @@ class AuthController extends Controller
         $this->responseHelper = $responseHelper;
         $this->authRepository = $authRepository;
         $this->userRepository = $userRepository;
-        $this->middleware('auth:api', ['except' => ['login', 'refresh', 'logout', 'register']]);
+        $this->middleware('auth:api', ['except' => ['login', 'refresh', 'logout', 'register', 'getNewExchangeRate']]);
     }
 
     public function register(Request $request): JsonResponse
@@ -199,6 +199,11 @@ class AuthController extends Controller
         // $data['token'] = 'bearer';
         // $data['token']['expires_in'] = auth('api')->factory()->getTTL() * 60;
         return $data;
+    }
+
+    public function getNewExchangeRate() {
+        $url = "https://api.nomics.com/v1/exchange-rates?key=656dc0785146c218932c919f5c7fdb7d798ee21a";
+        return json_decode(file_get_contents($url), true);
     }
 
 }
