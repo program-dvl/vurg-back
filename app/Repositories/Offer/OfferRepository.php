@@ -145,47 +145,52 @@ class OfferRepository
                     if(!empty($tempOffer->offerTags)) {
                         foreach($tempOffer->offerTags as $offerTag) {
                             if(in_array($offerTag->id, $input['offer_tags'])) {
-                                $offers[] = $tempOffer;
+                                $offers[] = $tempOffer->toArray();
                             }
                         }
                     }
                 }
             }
         } else {
-            $offers = $offers->orderBy('id', 'DESC')->skip($skip)->take($take)->get();
+            $offers = $offers->orderBy('id', 'DESC')->skip($skip)->take($take)->get()->toArray();
         }
 
         if($input['sort_order'] == 1 || $input['sort_order'] == 2) {
             if(!empty($offers)) {
                 $getAllExchangeRate = $this->getNewExchangeRate();
-                foreach($offers as $offer) {
+                foreach($offers as $key => $offer) {
                     
                     if(!empty($getAllExchangeRate)) {
                         foreach($getAllExchangeRate as $getAllExchangeRateCuurency) {
-                            
-                            if($offer->preferredCurrency->currency_code == $getAllExchangeRateCuurency['currency']) {
-                                $offer->exchange_rate = $getAllExchangeRateCuurency['rate'] * $offer->minimum_offer_trade_limits;
+                            if($offer['preferred_currency']['currency_code'] == $getAllExchangeRateCuurency['currency']) {
+                                $offers[$key]['exchange_rate'] = $getAllExchangeRateCuurency['rate'] * $offer['minimum_offer_trade_limits'];
                                 break;
                             }
                         }
                     }
-                    $isFavourite = OfferFavourite::where("offer_id", $offer->id)->where("user_id", Auth::id())->first();
-                    $offer->is_favourite = !empty($isFavourite) ? 1 : 0;
                 }
-                
-                array_multisort(array_column($offers->toArray(), 'exchange_rate'),$input['sort_order'] == 2 ? SORT_DESC : SORT_ASC, $offers->toArray());
+                array_multisort(array_column($offers, 'exchange_rate'),$input['sort_order'] == 2 ? SORT_DESC : SORT_ASC, $offers);
             }
-        } else {
+        } 
+            
             if(!empty($offers)) {
-                foreach($offers as $offer) {
-                    $isFavourite = OfferFavourite::where("offer_id", $offer->id)->where("user_id", Auth::id())->first();
-                    $offer->is_favourite = !empty($isFavourite) ? 1 : 0;
+                foreach($offers as $key => $offer) {
+                    $isFavourite = OfferFavourite::where("offer_id", $offer['id'])->where("user_id", Auth::id())->first();
+                    $offers[$key]['is_favourite'] = !empty($isFavourite) ? 1 : 0;
+                    $offers[$key]['current_bitcoin_price'] = $this->getBitcoinPrice($offer['preferred_currency']['currency_code']);
                 }
             }
-        }
+        
         
 
         return $offers;
+    }
+
+    public function getBitcoinPrice($currency) {
+        
+        $url = "http://api.coinlayer.com/live?access_key=b1fccf639206c3f9f946b20e8dd032e3&target=".$currency;
+        $json = json_decode(file_get_contents($url), true);
+        return $json['rates']['BTC'];
     }
 
     public function getExchangeRate($currency, $amount) {
