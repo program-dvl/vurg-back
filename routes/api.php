@@ -85,6 +85,10 @@ Route::middleware(['auth:api', 'lastActivity'])->group(function () {
     // Get supported
     Route::get('coins', 'App\Http\Controllers\Wallet\WalletController@allCoins');
     Route::post('logout', 'App\Http\Controllers\Auth\AuthController@logout');
+
+    Route::get('coin-rate/{currency}/{amount}', 'App\Http\Controllers\Wallet\WalletController@getExchangeRate');
+    Route::get('transactions/{coinId}', 'App\Http\Controllers\Wallet\WalletController@getTransactions');
+    Route::post('trade', 'App\Http\Controllers\Trade\TradeController@start');
     
 });
 Route::get('express', 'App\Http\Controllers\User\UserController@express');
