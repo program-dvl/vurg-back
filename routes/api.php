@@ -66,6 +66,11 @@ Route::middleware(['auth:api', 'lastActivity'])->group(function () {
     Route::post('create/offer', 'App\Http\Controllers\Offer\OffersController@createOffer');
     // save offers
     Route::post('update/offer', 'App\Http\Controllers\Offer\OffersController@createOffer');
+
+    
+    // Get Payment methods
+    Route::get('offer/paymentMethod', 'App\Http\Controllers\Offer\OffersController@getPaymentMethods');
+    
     // View Offer
     Route::get('offer/{id}', 'App\Http\Controllers\Offer\OffersController@viewOffer');
     // CHange Offer Status
@@ -81,9 +86,6 @@ Route::middleware(['auth:api', 'lastActivity'])->group(function () {
 
     // Get Offer Tags
     Route::get('offer/tags', 'App\Http\Controllers\Offer\OffersController@getOfferTags');
-
-    // Get Payment methods
-    Route::get('offer/paymentMethod', 'App\Http\Controllers\Offer\OffersController@getPaymentMethods');
 
     // Get user wallets
     Route::get('wallets', 'App\Http\Controllers\Wallet\WalletController@index');
