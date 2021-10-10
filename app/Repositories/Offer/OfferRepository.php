@@ -187,16 +187,28 @@ class OfferRepository
         return $offers;
     }
 
+    function curl_get_file_contents($URL)
+    {
+        $c = curl_init();
+        curl_setopt($c, CURLOPT_RETURNTRANSFER, 1);
+        curl_setopt($c, CURLOPT_URL, $URL);
+        $contents = curl_exec($c);
+        curl_close($c);
+
+        if ($contents) return $contents;
+        else return FALSE;
+    }
+
     public function getBitcoinPrice($currency) {
         
         $url = "http://api.coinlayer.com/live?access_key=b1fccf639206c3f9f946b20e8dd032e3&target=".$currency;
-        $json = json_decode(file_get_contents($url), true);
+        $json = json_decode($this->curl_get_file_contents($url), true);
         return $json['rates']['BTC'];
     }
 
     public function getExchangeRate($currency, $amount) {
         $url = "https://free.currconv.com/api/v7/convert?q=".$currency."_INR&compact=ultra&apiKey=acd9e68b55b0ec097c3b";
-        $json = json_decode(file_get_contents($url), true);
+        $json = json_decode($this->curl_get_file_contents($url), true);
         $convertedCurrency = $currency."_INR";
         $convertedAmount = $json[$convertedCurrency];
 

@@ -204,6 +204,7 @@ class OffersController extends Controller
             $rules = [
                 'page_number' => 'required|numeric|min:1',
                 'per_page' => 'required|numeric|min:1',
+                'sort_order' => 'required'
             ];
             $validator = Validator::make($request->all(), $rules);
             if ($validator->fails()) {
