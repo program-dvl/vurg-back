@@ -114,7 +114,8 @@ class OffersController extends Controller
             'offer_visibility' => !empty($input['offer_visibility']) ? $input['offer_visibility'] : 0,
             'minimum_trade_required' => !empty($input['minimum_trade_required']) ? $input['minimum_trade_required'] : 0,
             'limit_for_new_users' => !empty($input['limit_for_new_users']) ? $input['limit_for_new_users'] : 0,
-            'user_id' => Auth::id()
+            'user_id' => Auth::id(),
+            'status' => 1
         ];
 
 

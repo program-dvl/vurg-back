@@ -102,7 +102,8 @@ class OfferRepository
      */
     public function getAllOffers($input, $skip, $take)
     {
-        $offers = Offers::with(['userDetails', 'paymentMethod', 'preferredCurrency', 'targetCountry', 'offerTags'])->where("user_id", '!=',Auth::id());
+        $offers = Offers::with(['userDetails', 'paymentMethod', 'preferredCurrency', 'targetCountry', 'offerTags'])
+            ->where("user_id", '!=',Auth::id())->where('status', '=', 1);
         
         // Check By or Sell
         if(!empty($input['offer_type'])) {
