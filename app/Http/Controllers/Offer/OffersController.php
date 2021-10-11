@@ -133,8 +133,10 @@ class OffersController extends Controller
         }
 
         $displayFullName = !empty($input['display_full_name']) ? $input['display_full_name'] : 0; // overright existing settings
+        
         if($displayFullName == 1) {
-            $this->userRepository->updateDisplayNameSetting(Auth::id());
+            $dataUpdate = [ 'display_name' => $displayFullName];
+            $this->userRepository->updateUserDetails(Auth::id(),$dataUpdate);
         }
 
         $offers = $this->offerRepository->getOfferDetailsByOfferId($offers->id);

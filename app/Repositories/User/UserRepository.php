@@ -68,5 +68,4 @@ class UserRepository
         User::where("id", $userId)->update($dataUpdate);
         return true;
     }
-
 }
