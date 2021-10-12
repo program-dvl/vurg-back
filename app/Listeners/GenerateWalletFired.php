@@ -45,7 +45,7 @@ class GenerateWalletFired
 
     public function generateBitCoinWallet($user) {
         $userId = $user->id;
-        $coin = CurrencyCode::BITCOIN_TESTNET;
+        $coin = CurrencyCode::BITCOIN;
         $passPharse = rand();
         $bitgoExpress = new BitGoExpress($this->hostname, $this->port, $coin);
         $bitgoExpress->accessToken = env('BITGO_ACCESS_TOKEN');
@@ -62,7 +62,7 @@ class GenerateWalletFired
 
     public function generateUSDTWallet($user) {
         $userId = $user->id;
-        $coin = CurrencyCode::BITCOIN_TESTNET;
+        $coin = CurrencyCode::BITCOIN;
         $passPharse = 'vurg_tether_'.Crypt::encryptString($userId);
         $bitgoExpress = new BitGoExpress($this->hostname, $this->port, $coin);
         $bitgoExpress->accessToken = env('BITGO_ACCESS_TOKEN');

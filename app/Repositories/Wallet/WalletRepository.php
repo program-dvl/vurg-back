@@ -55,7 +55,7 @@ class WalletRepository
     public function allCoins() {
         return [
             [
-                'id' => CurrencyCode::BITCOIN_TESTNET,
+                'id' => CurrencyCode::BITCOIN,
                 'name' => 'Bitcoin',
                 'coin_vurg_id' => 1
             ]
@@ -111,7 +111,7 @@ class WalletRepository
     public function getCoin() {
         return [
             "1" => [
-                'id' => CurrencyCode::BITCOIN_TESTNET,
+                'id' => CurrencyCode::BITCOIN,
                 'name' => 'Bitcoin',
                 'coin_vurg_id' => 1
             ]
