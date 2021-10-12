@@ -70,6 +70,9 @@ Route::middleware(['auth:api', 'lastActivity'])->group(function () {
     
     // Get Payment methods
     Route::get('offer/paymentMethod', 'App\Http\Controllers\Offer\OffersController@getPaymentMethods');
+
+    // Get Offer Tags
+    Route::get('offer/tags', 'App\Http\Controllers\Offer\OffersController@getOfferTags');
     
     // View Offer
     Route::get('offer/{id}', 'App\Http\Controllers\Offer\OffersController@viewOffer');
@@ -83,9 +86,6 @@ Route::middleware(['auth:api', 'lastActivity'])->group(function () {
 
     // Get Feedback
     Route::post('feedback', 'App\Http\Controllers\Offer\OfferTradeFeedbackController@index');
-
-    // Get Offer Tags
-    Route::get('offer/tags', 'App\Http\Controllers\Offer\OffersController@getOfferTags');
 
     // Get user wallets
     Route::get('wallets', 'App\Http\Controllers\Wallet\WalletController@index');
