@@ -1069,6 +1069,23 @@
         }
       }
     },
+    "/transactions/{coinId}": {
+      "get": {
+        "operationId": "GET-transactions by coin id",
+        "summary": "Get wallet transactions by coin id",
+        "tags": [
+          "Wallet Transactions"
+        ],
+        "consumes": [
+          "application/json"
+        ],
+        "responses": {
+          "400": {
+            "description": "Bad Request"
+          }
+        }
+      }
+    },
     "/address/{coinId}": {
       "get": {
         "operationId": "GET-address-by-coin-id",

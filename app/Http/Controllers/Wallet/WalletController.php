@@ -83,4 +83,25 @@ class WalletController extends Controller
             return $this->sendError();
         }
     }
+
+    /**
+     * Get a transactions
+     * GET|HEAD /transactions/{coinId}
+     *
+     * @param Request $request
+     * @return Response
+     */
+    public function getTransactions($coinId) {
+        try {
+            $transactions = $this->walletRepository->getTransactions($coinId);
+            if (!$transactions) {
+                $apiStatus = Response::HTTP_NOT_FOUND;
+                $apiMessage = 'Transacrions not found';
+                return $this->sendError($apiMessage, $apiStatus);
+            }
+            return $this->sendSuccess($transactions, 'Transactions found succcessfully');
+        } catch (\Exception $e) { 
+            return $this->sendError();
+        }
+    }
 }
