@@ -46,7 +46,7 @@ class GenerateWalletFired
     public function generateBitCoinWallet($user) {
         $userId = $user->id;
         $coin = CurrencyCode::BITCOIN_TESTNET;
-        $passPharse = 'vurg_bitcoin_'.Crypt::encryptString($userId);
+        $passPharse = rand();
         $bitgoExpress = new BitGoExpress($this->hostname, $this->port, $coin);
         $bitgoExpress->accessToken = env('BITGO_ACCESS_TOKEN');
         $wallet = $bitgoExpress->generateWallet('Bitcoin', $passPharse);
@@ -54,7 +54,7 @@ class GenerateWalletFired
             'user_id' => $userId,
             'coin_id' => self::BITCOIN_ID,
             'lable' => 'Bitcoin',
-            'passphrase' => Crypt::encryptString($passPharse),
+            'passphrase' => $passPharse,
             'wallet_id' => $wallet['id']
         ];
         $this->userWallet->create($walletData);
