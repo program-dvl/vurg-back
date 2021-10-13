@@ -41,8 +41,9 @@ class WalletRepository
                 $bitgo = new BitGoSDK(env('BITGO_ACCESS_TOKEN'), $coin['id'], true);
                 $bitgo->walletId = $wallet->wallet_id;
                 $wallet = $bitgo->getWallet($coin['id']);
+                $lable = explode("-",$wallet['label']);
                 $allWallets[$coin['id']] = [
-                    'walletName' => $wallet['label'],
+                    'walletName' => $lable[0],
                     'coin' => $wallet['coin'],
                     'balance' => $wallet['balance']/100000000,
                     'address' => $wallet['receiveAddress']['address']

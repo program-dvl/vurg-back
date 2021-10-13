@@ -1445,6 +1445,51 @@
           }
         }
       }
+    },
+    "/send-coin": {
+      "post": {
+        "operationId": "POST-send-coin-to-wallet-address",
+        "summary": "Send coins to other wallet address",
+        "tags": [
+          "Wallet Transactions"
+        ],
+        "consumes": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "type": "object",
+              "properties": {
+                "amount": {
+                  "type": "integer",
+                  "example": "1"
+                },
+                "feeAmount": {
+                  "type": "integer",
+                  "example": "1"
+                },
+                "address": {
+                  "type": "string",
+                  "example": "3ELcfEYHWijLR8U331uX3AD53frHGPjSo2"
+                },
+                "password": {
+                  "type": "string",
+                  "example": "testPassword"
+                }                
+              }
+            }
+          }
+        ],
+        "responses": {
+          "400": {
+            "description": "Bad Request"
+          }
+        }
+      }
     }
   },
   "definitions": {
