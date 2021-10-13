@@ -102,6 +102,9 @@ Route::middleware(['auth:api', 'lastActivity'])->group(function () {
     Route::get('transactions/{coinId}', 'App\Http\Controllers\Wallet\WalletController@getTransactions');
 
     // Route::post('trade', 'App\Http\Controllers\Trade\TradeController@start');
+
+    Route::post('pre-transaction-details', 'App\Http\Controllers\Transaction\TransactionController@getPreTransactionDetails');
+    Route::post('convert-currency', 'App\Http\Controllers\Transaction\TransactionController@getConvertedCurrency');
     
 });
 Route::get('express', 'App\Http\Controllers\User\UserController@express');

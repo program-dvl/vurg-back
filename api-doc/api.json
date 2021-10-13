@@ -1367,6 +1367,84 @@
           }
         }
       }
+    },
+    "/convert-currency": {
+      "post": {
+        "operationId": "POST-Currency-convert",
+        "summary": "COnvert any currency like USD to BTC or BTC to USD",
+        "tags": [
+          "Wallet Transactions"
+        ],
+        "consumes": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "type": "object",
+              "properties": {
+                "amount": {
+                  "type": "integer",
+                  "example": "1"
+                },
+                "from": {
+                  "type": "string",
+                  "example": "BTC"
+                },
+                "to": {
+                  "type": "string",
+                  "example": "USD"
+                }                
+              }
+            }
+          }
+        ],
+        "responses": {
+          "400": {
+            "description": "Bad Request"
+          }
+        }
+      }
+    },
+    "/pre-transaction-details": {
+      "post": {
+        "operationId": "POST-get-pre-trasaction-details",
+        "summary": "Get transactions details before sending it to address",
+        "tags": [
+          "Wallet Transactions"
+        ],
+        "consumes": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "type": "object",
+              "properties": {
+                "amount": {
+                  "type": "integer",
+                  "example": "1"
+                },
+                "address": {
+                  "type": "string",
+                  "example": "3ELcfEYHWijLR8U331uX3AD53frHGPjSo2"
+                }                
+              }
+            }
+          }
+        ],
+        "responses": {
+          "400": {
+            "description": "Bad Request"
+          }
+        }
+      }
     }
   },
   "definitions": {
