@@ -70,6 +70,9 @@ Route::middleware(['auth:api', 'lastActivity'])->group(function () {
     
     // Get Payment methods
     Route::get('offer/paymentMethod', 'App\Http\Controllers\Offer\OffersController@getPaymentMethods');
+
+    // Get Offer Tags
+    Route::get('offer/tags', 'App\Http\Controllers\Offer\OffersController@getOfferTags');
     
     // View Offer
     Route::get('offer/{id}', 'App\Http\Controllers\Offer\OffersController@viewOffer');
@@ -84,9 +87,6 @@ Route::middleware(['auth:api', 'lastActivity'])->group(function () {
     // Get Feedback
     Route::post('feedback', 'App\Http\Controllers\Offer\OfferTradeFeedbackController@index');
 
-    // Get Offer Tags
-    Route::get('offer/tags', 'App\Http\Controllers\Offer\OffersController@getOfferTags');
-
     // Get user wallets
     Route::get('wallets', 'App\Http\Controllers\Wallet\WalletController@index');
 
@@ -96,6 +96,16 @@ Route::middleware(['auth:api', 'lastActivity'])->group(function () {
     // Get supported
     Route::get('coins', 'App\Http\Controllers\Wallet\WalletController@allCoins');
     Route::post('logout', 'App\Http\Controllers\Auth\AuthController@logout');
+
+    Route::get('coin-rate/{currency}/{amount}', 'App\Http\Controllers\Wallet\WalletController@getExchangeRate');
+
+    Route::get('transactions/{coinId}', 'App\Http\Controllers\Wallet\WalletController@getTransactions');
+
+    // Route::post('trade', 'App\Http\Controllers\Trade\TradeController@start');
+
+    Route::post('pre-transaction-details', 'App\Http\Controllers\Transaction\TransactionController@getPreTransactionDetails');
+    Route::post('convert-currency', 'App\Http\Controllers\Transaction\TransactionController@getConvertedCurrency');
+    Route::post('send-coin', 'App\Http\Controllers\Transaction\TransactionController@sendCointoAddress');
     
 });
 Route::get('express', 'App\Http\Controllers\User\UserController@express');

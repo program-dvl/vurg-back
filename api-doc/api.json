@@ -1132,6 +1132,23 @@
         }
       }
     },
+    "/transactions/{coinId}": {
+      "get": {
+        "operationId": "GET-transactions by coin id",
+        "summary": "Get wallet transactions by coin id",
+        "tags": [
+          "Wallet Transactions"
+        ],
+        "consumes": [
+          "application/json"
+        ],
+        "responses": {
+          "400": {
+            "description": "Bad Request"
+          }
+        }
+      }
+    },
     "/address/{coinId}": {
       "get": {
         "operationId": "GET-address-by-coin-id",
@@ -1339,6 +1356,129 @@
                 "offer_id": {
                   "type": "integer",
                   "example": "1"
+                }                
+              }
+            }
+          }
+        ],
+        "responses": {
+          "400": {
+            "description": "Bad Request"
+          }
+        }
+      }
+    },
+    "/convert-currency": {
+      "post": {
+        "operationId": "POST-Currency-convert",
+        "summary": "COnvert any currency like USD to BTC or BTC to USD",
+        "tags": [
+          "Wallet Transactions"
+        ],
+        "consumes": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "type": "object",
+              "properties": {
+                "amount": {
+                  "type": "integer",
+                  "example": "1"
+                },
+                "from": {
+                  "type": "string",
+                  "example": "BTC"
+                },
+                "to": {
+                  "type": "string",
+                  "example": "USD"
+                }                
+              }
+            }
+          }
+        ],
+        "responses": {
+          "400": {
+            "description": "Bad Request"
+          }
+        }
+      }
+    },
+    "/pre-transaction-details": {
+      "post": {
+        "operationId": "POST-get-pre-trasaction-details",
+        "summary": "Get transactions details before sending it to address",
+        "tags": [
+          "Wallet Transactions"
+        ],
+        "consumes": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "type": "object",
+              "properties": {
+                "amount": {
+                  "type": "integer",
+                  "example": "1"
+                },
+                "address": {
+                  "type": "string",
+                  "example": "3ELcfEYHWijLR8U331uX3AD53frHGPjSo2"
+                }                
+              }
+            }
+          }
+        ],
+        "responses": {
+          "400": {
+            "description": "Bad Request"
+          }
+        }
+      }
+    },
+    "/send-coin": {
+      "post": {
+        "operationId": "POST-send-coin-to-wallet-address",
+        "summary": "Send coins to other wallet address",
+        "tags": [
+          "Wallet Transactions"
+        ],
+        "consumes": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "type": "object",
+              "properties": {
+                "amount": {
+                  "type": "integer",
+                  "example": "1"
+                },
+                "feeAmount": {
+                  "type": "integer",
+                  "example": "1"
+                },
+                "address": {
+                  "type": "string",
+                  "example": "3ELcfEYHWijLR8U331uX3AD53frHGPjSo2"
+                },
+                "password": {
+                  "type": "string",
+                  "example": "testPassword"
                 }                
               }
             }
