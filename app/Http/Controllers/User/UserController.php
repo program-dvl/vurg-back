@@ -176,16 +176,6 @@ class UserController extends Controller
     public function updateProfile(Request $request)
     {
         try {
-            $validator = Validator::make($request->all(), [
-                'display_name' => 'required',
-                'preferred_currency' => 'required',
-                'user_timezone' => 'required',
-            ]);
-
-            if ($validator->fails()) {
-                return $this->sendValidationError($validator->messages());
-            }
-
             $input = $request->all();
             $userDetails = User::find(Auth::id());
 
