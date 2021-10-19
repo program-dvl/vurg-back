@@ -53,7 +53,7 @@ class UserRepository
      */
     public function userDetailsForProfile(int $userId): User
     {
-        return User::with(['settings' , 'currency', 'timezone', 'phonecode'])->find($userId);
+        return User::with(['settings' , 'preferredCurrency', 'timezone', 'phonecode'])->find($userId);
     }
 
     /**

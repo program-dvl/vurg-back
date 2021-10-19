@@ -218,7 +218,7 @@ class OfferRepository
 
     public function getBitcoinPrice($currency) {
         
-        $url = "https://api.coinlayer.com/live?access_key=b1fccf639206c3f9f946b20e8dd032e3&target=".$currency;
+        $url = "http://api.coinlayer.com/live?access_key=b1fccf639206c3f9f946b20e8dd032e3&target=".$currency;
         $json = json_decode($this->curl_get_file_contents($url), true);
         return $json['rates']['BTC'];
     }

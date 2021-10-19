@@ -95,7 +95,7 @@ class User extends Authenticatable implements MustVerifyEmail, JWTSubject
         return $this->hasMany('App\Models\UserSettings','user_id');
     }
 
-    public function currency() {
+    public function preferredCurrency() {
         return $this->belongsTo('App\Models\Currency','preferred_currency');
     }
 
