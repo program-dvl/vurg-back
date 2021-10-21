@@ -59,9 +59,9 @@ class TransactionRepository
         return [
             'sending_bitcoin' => $sendingBitcoin,
             'sending_bitcoin_in_user_currency' => $sendingBitcoinInCurrency,
-            'bitcon_network_handling_fee' => $feeAmount,
-            'bitcon_network_handling_fee_in_user_currency' => $feeAmountInCurrency,
-            'in_total_decution' => $amount,
+            'bitcoin_network_handling_fee' => $feeAmount,
+            'bitcoin_network_handling_fee_in_user_currency' => $feeAmountInCurrency,
+            'in_total_deduction' => $amount,
             'in_total_deduction_in_user_currency' => $flatAmount,
             'user_currency' => $userCurrency
         ];
