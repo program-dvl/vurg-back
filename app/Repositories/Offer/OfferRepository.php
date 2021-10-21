@@ -20,7 +20,7 @@ class OfferRepository
      */
     public function getOfferDetails(int $userId, $offerType = 0, $currencyType = 0, $skip, $take)
     {
-        $offers = Offers::with(['offerTags', 'userDetails', 'paymentMethod', 'preferredCurrency', 'targetCountry'])->where("user_id", $userId);
+        $offers = Offers::with(['offerTags', 'userDetails', 'paymentMethod', 'preferredCurrency', 'targetCountry', 'offerTags.tags'])->where("user_id", $userId);
         if(!empty($offerType)) {
             $offers->where('offer_type', $offerType);
         }
@@ -84,7 +84,7 @@ class OfferRepository
 
     public function getOfferDetailsByOfferId($offerId)
     {
-        $offers = Offers::with(['offerTags', 'userDetails', 'paymentMethod', 'preferredCurrency', 'targetCountry'])->where("id", $offerId)->first();
+        $offers = Offers::with(['offerTags', 'userDetails', 'paymentMethod', 'preferredCurrency', 'targetCountry', 'offerTags.tags'])->where("id", $offerId)->first();
         $isFavourite = OfferFavourite::where("offer_id", $offers->id)->where("user_id", Auth::id())->first();
         $offers->is_favourite = !empty($isFavourite) ? 1 : 0;
         $offers->current_bitcoin_price = $this->getBitcoinPrice($offers->preferredCurrency->currency_code);
@@ -217,8 +217,7 @@ class OfferRepository
     }
 
     public function getBitcoinPrice($currency) {
-        
-        $url = "http://api.coinlayer.com/live?access_key=b1fccf639206c3f9f946b20e8dd032e3&target=".$currency;
+        $url = "https://api.coinlayer.com/live?access_key=10d4b8fafb97d00c1f8a1830caf3cfab&target=".$currency;
         $json = json_decode($this->curl_get_file_contents($url), true);
         return $json['rates']['BTC'];
     }
