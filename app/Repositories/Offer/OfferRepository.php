@@ -215,6 +215,13 @@ class OfferRepository
         return $convertedAmount * $amount;
     }
 
+    public function getExchangeRateByCurrency($currency) {
+        $url = "https://free.currconv.com/api/v7/convert?q=".$currency."_INR&compact=ultra&apiKey=acd9e68b55b0ec097c3b";
+        $json = json_decode($this->curl_get_file_contents($url), true);
+        $convertedCurrency = $currency."_INR";
+        return $json[$convertedCurrency];
+    }
+
 
     public function getNewExchangeRate() {
         $url = "https://api.nomics.com/v1/exchange-rates?key=656dc0785146c218932c919f5c7fdb7d798ee21a";

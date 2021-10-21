@@ -101,7 +101,10 @@ Route::middleware(['auth:api', 'lastActivity'])->group(function () {
 
     Route::get('transactions/{coinId}', 'App\Http\Controllers\Wallet\WalletController@getTransactions');
 
-    // Route::post('trade', 'App\Http\Controllers\Trade\TradeController@start');
+    Route::post('trade', 'App\Http\Controllers\Trade\TradeController@createTrade');
+    Route::get('trade/{tradeId}/cancel', 'App\Http\Controllers\Trade\TradeController@cancelTrade');
+    Route::get('trade/{tradeId}/accept', 'App\Http\Controllers\Trade\TradeController@acceptPayment');
+    Route::get('trade/{tradeId}/receive', 'App\Http\Controllers\Trade\TradeController@receivePayment');
 
     Route::post('pre-transaction-details', 'App\Http\Controllers\Transaction\TransactionController@getPreTransactionDetails');
     Route::post('convert-currency', 'App\Http\Controllers\Transaction\TransactionController@getConvertedCurrency');

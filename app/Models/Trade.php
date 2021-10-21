@@ -7,6 +7,12 @@ use Illuminate\Support\Str;
 
 class Trade extends Model
 {
+    Use HasStateMachines;
+
+    public $stateMachines = [
+        'trade_status' => TradeStatusStateMachine::class
+    ];   
+
     public $table = 'trade';
 
     protected $fillable = [

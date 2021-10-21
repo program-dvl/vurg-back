@@ -53,6 +53,16 @@ class WalletRepository
         return $allWallets;
     }
 
+    /**
+     * get user wallet by coin id.
+     *
+     * @return array
+     */
+    public function getUserWallet($coin_id): array
+    {
+        return $this->userWallet->where('user_id', Auth::id())->where('coin_id', $coin_id)->latest('created_at')->first();
+    }
+
     public function allCoins() {
         return [
             [
