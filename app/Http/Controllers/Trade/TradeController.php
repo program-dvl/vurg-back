@@ -12,8 +12,6 @@ use App\Repositories\Offer\OfferRepository;
 use Illuminate\Support\Facades\Auth;
 use Carbon\Carbon;
 use App\Events\StartTrade;
-use App\Services\BitGoSDK;
-use neto737\BitGoSDK\Enum\CurrencyCode;
 
 class TradeController extends Controller
 {
@@ -56,25 +54,15 @@ class TradeController extends Controller
                 return $this->sendValidationError($validator->messages());
             }
 
-            // create order with pending state
-            // Get balance for seller from bitgo
-            // Get seller wallet from the table
-            // Get exchange rate
-            // Below should be in transaction 
-                // Check validation and blocked the amount
-                // change status to wait
-            // If something goes wrong the mark trade as reject and throws error
             $offer = $this->offerRepository->getOfferDetailsByOfferId($request->offer_id);
             if (!$offer) {
                 return $this->sendError('Offer not found', Response::HTTP_NOT_FOUND);
             }
-            $wallet = $this->walletRepository->getUserWallet($offer->user_id);
+            $wallet = $this->walletRepository->getUserWallet($offer->user_id, $offer->cryptocurreny_type);
             if (!$wallet) {
                 return $this->sendError('Wallet not found', Response::HTTP_NOT_FOUND);
             }
-            $bitgo = new BitGoSDK(env('BITGO_ACCESS_TOKEN'), $coin['id'], true);
-            $bitgo->walletId = $wallet->wallet_id;
-            $bitgo_wallet = $bitgo->getWallet($coin['id']);
+            $bitgo_wallet = $this->walletRepository->getBitgoWallet($wallet->wallet_id, $offer->cryptocurreny_type);
 
             $market_rate = $this->walletRepository->getExchangeRateByCurrency($offer->preferredCurrency->currency_code);
             $mytime = Carbon::now();
@@ -129,7 +117,7 @@ class TradeController extends Controller
             if (!$offer) {
                 return $this->sendError('Offer not found', Response::HTTP_NOT_FOUND);
             }
-            $wallet = $this->walletRepository->getUserWallet($offer->user_id);
+            $wallet = $this->walletRepository->getUserWallet($offer->user_id, $offer->cryptocurreny_type);
             if (!$wallet) {
                 return $this->sendError('Wallet not found', Response::HTTP_NOT_FOUND);
             }
@@ -175,32 +163,55 @@ class TradeController extends Controller
      */
     public function acceptPayment(Request $request) {
         try {
-
             $trade = $this->tradeRepository->tradeDetails($coinId);
             if (!$trade) {
                 return $this->sendError('Trade not found', Response::HTTP_NOT_FOUND);
             }
-            // Fetch trade details
-            // Seller wallet details
-            // Buyer wallet details 
-            // do following things in transaction if trade status not in the cancel or reject
-                // transfer bitcoin from seller to buyer
-                // change trade status to done
-                // update buyer and seller wallet details 
+            $offer = $this->offerRepository->getOfferDetailsByOfferId($trade->offer_id);
+            if (!$offer) {
+                return $this->sendError('Offer not found', Response::HTTP_NOT_FOUND);
+            }
+            if($offer->user_id != Auth::id()) {
+                return $this->sendError('Unauthorized to perform this operation', Response::HTTP_UNAUTHORIZED );
+            }
+            $seller_wallet = $this->walletRepository->getUserWallet($offer->user_id, $offer->cryptocurreny_type);
+            if (!$seller_wallet) {
+                return $this->sendError('Wallet not found', Response::HTTP_NOT_FOUND);
+            }
+            $buyer_wallet = $this->walletRepository->getUserWallet($trade->user_id, $offer->cryptocurreny_type);
+            if (!$buyer_wallet) {
+                return $this->sendError('Wallet not found', Response::HTTP_NOT_FOUND);
+            }
+            $buyer_bitgo_wallet = $this->walletRepository->getBitgoWallet($buyer_wallet->wallet_id, $offer->cryptocurreny_type);
+            $credentials = [
+                'email' => Auth::user()->email,
+                'password' => $request->password
+            ];
 
-
-            $offer = $this->offerRepository->getOfferDetailsByOfferId($request->offer_id);
-            $currency = $offer->preferredCurrency->currency_code;
-            $crypto_amount = $this->walletRepository->getExchangeRate($currency, $request->amount);
-            $mytime = Carbon::now();
-            $tradeData = [];
-            $tradeData['offer_id'] = $request->offer_id;
-            $trade = $this->tradeRepository->start($tradeData);
-
-            // Start trade
-            event(new StartTrade($trade));
-            
-            return $this->sendSuccess($trade, 'Trade started successfully');
+            if (!auth('api')->attempt($credentials)) {
+                $apiStatus = Response::HTTP_UNPROCESSABLE_ENTITY;
+                $apiMessage = 'Invalid Password';
+                return $this->sendError($apiMessage, $apiStatus);
+            }
+            $status = $this->transactionRepository->transferCoinToAddress(
+                $trade->amount,
+                0,
+                $buyer_bitgo_wallet['receiveAddress']['address']
+            );
+            if (!$status) {
+                $apiStatus = Response::HTTP_UNPROCESSABLE_ENTITY;
+                $apiMessage = 'Failed to send the coins';
+                return $this->sendError($apiMessage, $apiStatus);
+            }
+            DB::beginTransaction();
+            $trade->tradeStatus()->transitionTo('done');
+            $seller_wallet->locked -= $trade->crypto_amount;
+            $seller_wallet->balance -= $trade->crypto_amount;
+            $seller_wallet->save();
+            $buyer_wallet->balance += $trade->crypto_amount;
+            $buyer_wallet->save();
+            DB::commit();
+            return $this->sendSuccess($trade, 'Trade completed successfully');
         } catch (\Exception $e) { 
             return $this->sendError($e->getMessage());
         }
