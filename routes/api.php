@@ -109,6 +109,16 @@ Route::middleware(['auth:api', 'lastActivity'])->group(function () {
     Route::post('pre-transaction-details', 'App\Http\Controllers\Transaction\TransactionController@getPreTransactionDetails');
     Route::post('convert-currency', 'App\Http\Controllers\Transaction\TransactionController@getConvertedCurrency');
     Route::post('send-coin', 'App\Http\Controllers\Transaction\TransactionController@sendCointoAddress');
+
+
+    //Get Notification UnreadCount
+    Route::get('notification/unread-count', 'App\Http\Controllers\Notification\NotificationController@getUnreadNotificationCount');
+
+    //Get All Notifications
+    Route::post('get/notification', 'App\Http\Controllers\Notification\NotificationController@getAllNotifications');
+
+    //Make All notifications to read
+    Route::get('notification/mark-as-read', 'App\Http\Controllers\Notification\NotificationController@markAsReadNotifications');
     
 });
 Route::get('express', 'App\Http\Controllers\User\UserController@express');

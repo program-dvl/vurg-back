@@ -24,7 +24,8 @@ class DatabaseSeeder extends Seeder
             PaymentMethodCategorySeeder::class,
             PaymentMethodsSeeder::class,
             OfferSeeder::class,
-            OfferFeedbackSeeder::class
+            OfferFeedbackSeeder::class,
+            NotificationSeeder::class
         ]);
     }
 }

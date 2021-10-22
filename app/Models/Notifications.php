@@ -6,15 +6,15 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
 /**
- * Class UserNotifications
+ * Class Notifications
  * @package App\Models
  * @version July 10, 2020, 4:29 am UTC
  *
  */
-class UserNotifications extends Model
+class Notifications extends Model
 {
 
-    public $table = 'user_notifications';
+    public $table = 'notifications';
 
     /**
      * The attributes that are mass assignable.
@@ -22,14 +22,8 @@ class UserNotifications extends Model
      * @var array
      */
     protected $fillable = [
-        'notification_id',
-        'notification_text',
-        'is_read',
+        'name',
         'created_at',
         'updated_at'
     ];
-
-    public function notifications() {
-        return $this->belongsToz('App\Models\Notifications','notification_id');
-    }
 }
