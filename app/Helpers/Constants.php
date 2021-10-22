@@ -14,3 +14,6 @@ define('POPULAR', 1);
 define('OFFER_ACTIVE', 1);
 define('PAYMENT_METHOD_CATEGORY_ACTIVE', 1);
 define('PAYMENT_METHOD_ACTIVE', 1);
+
+define('NOTIFICATION_READ', 1);
+define('NOTIFICATION_UNREAD', 0);
