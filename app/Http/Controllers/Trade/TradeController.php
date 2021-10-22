@@ -197,8 +197,8 @@ class TradeController extends Controller
                 return $this->sendError($apiMessage, $apiStatus);
             }
             $status = $this->transactionRepository->transferCoinToAddress(
-                $trade->amount,
-                0,
+                $trade->crypto_amount,
+                $trade->fee_amount,
                 $buyer_bitgo_wallet['receiveAddress']['address']
             );
             if (!$status) {
