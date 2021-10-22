@@ -23,6 +23,8 @@ class Trade extends Model
         'start_time',
         'currency_amount',
         'crypto_amount',
+        'market_rate',
+        'fee_amount',
         'created_at',
         'updated_at',
         'deleted_at'

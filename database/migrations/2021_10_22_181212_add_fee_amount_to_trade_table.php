@@ -4,7 +4,7 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-class AddMarketRateToTradeTable extends Migration
+class AddFeeAmountToTradeTable extends Migration
 {
     /**
      * Run the migrations.
@@ -14,7 +14,7 @@ class AddMarketRateToTradeTable extends Migration
     public function up()
     {
         Schema::table('trade', function (Blueprint $table) {
-            $table->decimal('market_rate',15,10);
+            $table->decimal('fee_amount',15,10);
         });
     }
 
@@ -26,7 +26,7 @@ class AddMarketRateToTradeTable extends Migration
     public function down()
     {
         Schema::table('trade', function (Blueprint $table) {
-            $table->dropColumn('market_rate');
+            $table->dropColumn('fee_amount');
         });
     }
 }

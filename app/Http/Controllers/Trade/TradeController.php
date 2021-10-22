@@ -65,6 +65,8 @@ class TradeController extends Controller
             $bitgo_wallet = $this->walletRepository->getBitgoWallet($wallet->wallet_id, $offer->cryptocurreny_type);
 
             $market_rate = $this->walletRepository->getExchangeRateByCurrency($offer->preferredCurrency->currency_code);
+            $crypto_amount = $market_rate * $request->amount;
+            $fee_amount = $crypto_amount/100;
             $mytime = Carbon::now();
             $tradeData = [];
             $tradeData['offer_id'] = $request->offer_id;
@@ -72,7 +74,8 @@ class TradeController extends Controller
             $tradeData['user_id'] = Auth::id();
             $tradeData['start_time'] = $mytime->toDateTimeString();
             $tradeData['currency_amount'] = $request->amount;
-            $tradeData['crypto_amount'] = $market_rate * $request->amount;
+            $tradeData['crypto_amount'] = $crypto_amount - $fee_amount;
+            $tradeData['fee_amount'] = $free_amount;
             $tradeData['market_rate'] = $market_rate;
             $trade = $this->tradeRepository->start($tradeData);
             if (empty($bitgo_wallet)) {
