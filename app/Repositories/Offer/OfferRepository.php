@@ -36,6 +36,12 @@ class OfferRepository
                 $isFavourite = OfferFavourite::where("offer_id", $offer['id'])->where("user_id", Auth::id())->first();
                 $offers[$key]['is_favourite'] = !empty($isFavourite) ? 1 : 0;
                 $offers[$key]['current_bitcoin_price'] = $this->getBitcoinPrice($offer['preferred_currency']['currency_code']);
+                if(!empty($offer->offerTags)) {
+                    foreach($offer->offerTags as $keyOfferTag => $offerTag) {
+                        $offer->offerTags[$keyOfferTag]['tag_name'] = $offerTag->tags->tag_name;
+                        $offer->offerTags[$keyOfferTag]['tag_description'] = $offerTag->tags->tag_description;
+                    }
+                }
             }
         }
 
@@ -88,6 +94,12 @@ class OfferRepository
         $isFavourite = OfferFavourite::where("offer_id", $offers->id)->where("user_id", Auth::id())->first();
         $offers->is_favourite = !empty($isFavourite) ? 1 : 0;
         $offers->current_bitcoin_price = $this->getBitcoinPrice($offers->preferredCurrency->currency_code);
+        if(!empty($offers->offerTags)) {
+            foreach($offers->offerTags as $keyOfferTag => $offerTag) {
+                $offers->offerTags[$keyOfferTag]['tag_name'] = $offerTag->tags->tag_name;
+                $offers->offerTags[$keyOfferTag]['tag_description'] = $offerTag->tags->tag_description;
+            }
+        }
         return $offers;
     }
 
@@ -196,6 +208,13 @@ class OfferRepository
                 $isFavourite = OfferFavourite::where("offer_id", $offer['id'])->where("user_id", Auth::id())->first();
                 $offers[$key]['is_favourite'] = !empty($isFavourite) ? 1 : 0;
                 $offers[$key]['current_bitcoin_price'] = $this->getBitcoinPrice($offer['preferred_currency']['currency_code']);
+                
+                if(!empty($offer['offer_tags'])) {
+                    foreach($offer['offer_tags'] as $keyOfferTag => $offerTag) {
+                        $offers[$key]['offer_tags'][$keyOfferTag]['tag_name'] = $offerTag['tags']['tag_name'];
+                        $offers[$key]['offer_tags'][$keyOfferTag]['tag_description'] = $offerTag['tags']['tag_description'];
+                    }
+                }
             }
         }
         
