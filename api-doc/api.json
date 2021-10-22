@@ -1335,6 +1335,94 @@
         }
       }
     },
+    "/trade": {
+      "post": {
+        "operationId": "POST-start-trade-api",
+        "summary": "POST Start trade API",
+        "tags": [
+          "Trade"
+        ],
+        "consumes": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "type": "object",
+              "properties": {
+                "offer_id": {
+                  "type": "integer",
+                  "example": "1"
+                },
+                "amount": {
+                  "type": "integer",
+                  "example": "1"
+                }                  
+              }
+            }
+          }
+        ],
+        "responses": {
+          "400": {
+            "description": "Bad Request"
+          }
+        }
+      }
+    },
+    "/trade/{tradeId}/cancel": {
+      "get": {
+        "operationId": "GET-cancel-trade-api",
+        "summary": "Cancel trade API",
+        "tags": [
+          "Trade"
+        ],
+        "consumes": [
+          "application/json"
+        ],
+        "responses": {
+          "400": {
+            "description": "Bad Request"
+          }
+        }
+      }
+    },
+    "/trade/{tradeId}/accept": {
+      "get": {
+        "operationId": "GET-accept-trade-api",
+        "summary": "When seller confirm the payment received ( when seller click on received button )",
+        "tags": [
+          "Trade"
+        ],
+        "consumes": [
+          "application/json"
+        ],
+        "responses": {
+          "400": {
+            "description": "Bad Request"
+          }
+        }
+      }
+    },
+    "/trade/{tradeId}/receive": {
+      "get": {
+        "operationId": "GET-receive-trade-api",
+        "summary": "When buyer confirm the payment sent ( when buyer click on paid button )",
+        "tags": [
+          "Trade"
+        ],
+        "consumes": [
+          "application/json"
+        ],
+        "responses": {
+          "400": {
+            "description": "Bad Request"
+          }
+        }
+      }
+    },
     "/offer/remove/favourite": {
       "post": {
         "operationId": "GET-offer-remove-from-favourite",
