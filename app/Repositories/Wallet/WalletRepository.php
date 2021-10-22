@@ -58,7 +58,7 @@ class WalletRepository
      *
      * @return array
      */
-    public function getUserWallet($user_id, $coin_id): array
+    public function getUserWallet($user_id, $coin_id)
     {
         return $this->userWallet->where('user_id', $user_id)->where('coin_id', $coin_id)->latest('created_at')->first();
     }
@@ -68,11 +68,11 @@ class WalletRepository
      *
      * @return array
      */
-    public function getBitgoWallet($user_id, $coin_id): array
+    public function getBitgoWallet($user_id, $coin_id)
     {
-        $bitgo = new BitGoSDK(env('BITGO_ACCESS_TOKEN'), $coin['id'], true);
+        $bitgo = new BitGoSDK(env('BITGO_ACCESS_TOKEN'), $coin_id, true);
         $bitgo->walletId = $wallet->wallet_id;
-        return $bitgo->getWallet($coin['id']);
+        return $bitgo->getWallet($coin_id);
     }
 
 

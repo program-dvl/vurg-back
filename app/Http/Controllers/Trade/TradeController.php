@@ -12,6 +12,7 @@ use App\Repositories\Offer\OfferRepository;
 use Illuminate\Support\Facades\Auth;
 use Carbon\Carbon;
 use App\Events\StartTrade;
+use Illuminate\Support\Facades\DB;
 
 class TradeController extends Controller
 {
@@ -96,7 +97,7 @@ class TradeController extends Controller
             return $this->sendSuccess($trade, 'Trade started successfully');
         } catch (\Exception $e) {
             DB::rollBack(); 
-            if($trade) {
+            if(isset($trade)) {
                 $trade->tradeStatus()->transitionTo('reject');
             }
             return $this->sendError($e->getMessage());

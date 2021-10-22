@@ -4,6 +4,8 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Str;
+use Asantibanez\LaravelEloquentStateMachines\Traits\HasStateMachines;
+use App\StateMachines\StatusStateMachine; 
 
 class Trade extends Model
 {
