@@ -107,7 +107,7 @@ class WalletRepository
                     foreach ($transactions['transfers'] as $key => $value) {
                         $respone[$key]['crypt_amount'] = $value['value']/100000000;
                         $respone[$key]['state'] = $value['state'];
-                        $respone[$key]['transaction_type'] = ($value['type'] == 'receive') ? 'Recived' : 'Sent Out';
+                        $respone[$key]['transaction_type'] = ($value['type'] == 'receive') ? 'Received' : 'Sent Out';
                         $respone[$key]['sent_to'] = $value['wallet'];
                         $respone[$key]['transaction_id'] = $value['id'];
                         $respone[$key]['date'] = $value['date'];

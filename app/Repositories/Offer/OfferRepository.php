@@ -20,7 +20,7 @@ class OfferRepository
      */
     public function getOfferDetails(int $userId, $offerType = 0, $currencyType = 0, $skip, $take)
     {
-        $offers = Offers::with(['offerTags', 'userDetails', 'paymentMethod', 'preferredCurrency', 'targetCountry'])->where("user_id", $userId);
+        $offers = Offers::with(['offerTags', 'userDetails', 'paymentMethod', 'preferredCurrency', 'targetCountry', 'offerTags.tags'])->where("user_id", $userId);
         if(!empty($offerType)) {
             $offers->where('offer_type', $offerType);
         }
@@ -30,6 +30,20 @@ class OfferRepository
         }
         
         $offers = $offers->orderBy('id', 'DESC')->skip($skip)->take($take)->get();
+
+        if(!empty($offers)) {
+            foreach($offers as $key => $offer) {
+                $isFavourite = OfferFavourite::where("offer_id", $offer['id'])->where("user_id", Auth::id())->first();
+                $offers[$key]['is_favourite'] = !empty($isFavourite) ? 1 : 0;
+                $offers[$key]['current_bitcoin_price'] = $this->getBitcoinPrice($offer['preferred_currency']['currency_code']);
+                if(!empty($offer->offerTags)) {
+                    foreach($offer->offerTags as $keyOfferTag => $offerTag) {
+                        $offer->offerTags[$keyOfferTag]['tag_name'] = $offerTag->tags->tag_name;
+                        $offer->offerTags[$keyOfferTag]['tag_description'] = $offerTag->tags->tag_description;
+                    }
+                }
+            }
+        }
 
         return $offers;
     }
@@ -76,7 +90,16 @@ class OfferRepository
 
     public function getOfferDetailsByOfferId($offerId)
     {
-        $offers = Offers::with(['offerTags', 'userDetails', 'paymentMethod', 'preferredCurrency', 'targetCountry'])->where("id", $offerId)->first();
+        $offers = Offers::with(['offerTags', 'userDetails', 'paymentMethod', 'preferredCurrency', 'targetCountry', 'offerTags.tags'])->where("id", $offerId)->first();
+        $isFavourite = OfferFavourite::where("offer_id", $offers->id)->where("user_id", Auth::id())->first();
+        $offers->is_favourite = !empty($isFavourite) ? 1 : 0;
+        $offers->current_bitcoin_price = $this->getBitcoinPrice($offers->preferredCurrency->currency_code);
+        if(!empty($offers->offerTags)) {
+            foreach($offers->offerTags as $keyOfferTag => $offerTag) {
+                $offers->offerTags[$keyOfferTag]['tag_name'] = $offerTag->tags->tag_name;
+                $offers->offerTags[$keyOfferTag]['tag_description'] = $offerTag->tags->tag_description;
+            }
+        }
         return $offers;
     }
 
@@ -102,7 +125,7 @@ class OfferRepository
      */
     public function getAllOffers($input, $skip, $take)
     {
-        $offers = Offers::with(['userDetails', 'paymentMethod', 'preferredCurrency', 'targetCountry', 'offerTags'])
+        $offers = Offers::with(['userDetails', 'paymentMethod', 'preferredCurrency', 'targetCountry', 'offerTags' , 'offerTags.tags'])
             ->where("user_id", '!=',Auth::id())->where('status', '=', 1);
         
         // Check By or Sell
@@ -132,6 +155,10 @@ class OfferRepository
             $offers->where('preferred_currency', $input['preffered_currency']);
         }
 
+        if(!empty($input['preffered_currency'])) {
+            $offers->where('preferred_currency', $input['preffered_currency']);
+        }
+
         if($input['sort_order'] == 3) {
             $offers->orderBy('offer_time_limit', 'ASC');
         } else if($input['sort_order'] == 4) {
@@ -156,6 +183,7 @@ class OfferRepository
             $offers = $offers->orderBy('id', 'DESC')->skip($skip)->take($take)->get()->toArray();
         }
 
+        
         if($input['sort_order'] == 1 || $input['sort_order'] == 2) {
             if(!empty($offers)) {
                 $getAllExchangeRate = $this->getNewExchangeRate();
@@ -170,17 +198,25 @@ class OfferRepository
                         }
                     }
                 }
+                
                 array_multisort(array_column($offers, 'exchange_rate'),$input['sort_order'] == 2 ? SORT_DESC : SORT_ASC, $offers);
             }
         } 
             
-            if(!empty($offers)) {
-                foreach($offers as $key => $offer) {
-                    $isFavourite = OfferFavourite::where("offer_id", $offer['id'])->where("user_id", Auth::id())->first();
-                    $offers[$key]['is_favourite'] = !empty($isFavourite) ? 1 : 0;
-                    $offers[$key]['current_bitcoin_price'] = $this->getBitcoinPrice($offer['preferred_currency']['currency_code']);
+        if(!empty($offers)) {
+            foreach($offers as $key => $offer) {
+                $isFavourite = OfferFavourite::where("offer_id", $offer['id'])->where("user_id", Auth::id())->first();
+                $offers[$key]['is_favourite'] = !empty($isFavourite) ? 1 : 0;
+                $offers[$key]['current_bitcoin_price'] = $this->getBitcoinPrice($offer['preferred_currency']['currency_code']);
+                
+                if(!empty($offer['offer_tags'])) {
+                    foreach($offer['offer_tags'] as $keyOfferTag => $offerTag) {
+                        $offers[$key]['offer_tags'][$keyOfferTag]['tag_name'] = $offerTag['tags']['tag_name'];
+                        $offers[$key]['offer_tags'][$keyOfferTag]['tag_description'] = $offerTag['tags']['tag_description'];
+                    }
                 }
             }
+        }
         
         
 
@@ -200,8 +236,7 @@ class OfferRepository
     }
 
     public function getBitcoinPrice($currency) {
-        
-        $url = "http://api.coinlayer.com/live?access_key=b1fccf639206c3f9f946b20e8dd032e3&target=".$currency;
+        $url = "https://api.coinlayer.com/live?access_key=10d4b8fafb97d00c1f8a1830caf3cfab&target=".$currency;
         $json = json_decode($this->curl_get_file_contents($url), true);
         return $json['rates']['BTC'];
     }
@@ -224,7 +259,7 @@ class OfferRepository
 
 
     public function getNewExchangeRate() {
-        $url = "https://api.nomics.com/v1/exchange-rates?key=656dc0785146c218932c919f5c7fdb7d798ee21a";
+        $url = "http://api.nomics.com/v1/exchange-rates?key=656dc0785146c218932c919f5c7fdb7d798ee21a";
         return json_decode($this->curl_get_file_contents($url), true);
     }
 

@@ -20,4 +20,8 @@ class UserOfferTags extends Model
         'offer_id',
         'offer_tag_id'
     ];
+
+    public function tags() {
+        return $this->belongsTo('App\Models\OfferTags','offer_tag_id');
+    }
 }
