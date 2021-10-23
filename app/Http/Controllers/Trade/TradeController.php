@@ -13,6 +13,7 @@ use Illuminate\Support\Facades\Auth;
 use Carbon\Carbon;
 use App\Events\StartTrade;
 use Illuminate\Support\Facades\DB;
+use App\Repositories\Transaction\TransactionRepository;
 
 class TradeController extends Controller
 {
@@ -25,11 +26,13 @@ class TradeController extends Controller
     public function __construct(
         TradeRepository $tradeRepository,
         WalletRepository $walletRepository,
-        OfferRepository $offerRepository
+        OfferRepository $offerRepository,
+        TransactionRepository $transactionRepository
     ) {
         $this->tradeRepository = $tradeRepository;
         $this->walletRepository = $walletRepository;
         $this->offerRepository = $offerRepository;
+        $this->transactionRepository = $transactionRepository;
     }
 
     /**
@@ -101,7 +104,7 @@ class TradeController extends Controller
             if (isset($trade)) {
                 $trade->status()->transitionTo('reject');
                 $trade->save();
-            }
+            } 
             return $this->sendError($e->getMessage());
         }
     }
@@ -182,9 +185,9 @@ class TradeController extends Controller
             if (!$offer) {
                 return $this->sendError('Offer not found', Response::HTTP_NOT_FOUND);
             }
-            if ($offer->user_id != Auth::id()) {
-                return $this->sendError('Unauthorized to perform this operation', Response::HTTP_UNAUTHORIZED);
-            }
+            // if ($offer->user_id != Auth::id()) {
+            //     return $this->sendError('Unauthorized to perform this operation', Response::HTTP_UNAUTHORIZED);
+            // }
             $seller_wallet = $this->walletRepository->getUserWallet($offer->user_id, $offer->cryptocurreny_type);
             if (!$seller_wallet) {
                 return $this->sendError('Wallet not found', Response::HTTP_NOT_FOUND);
@@ -194,16 +197,16 @@ class TradeController extends Controller
                 return $this->sendError('Wallet not found', Response::HTTP_NOT_FOUND);
             }
             $buyer_bitgo_wallet = $this->walletRepository->getBitgoWallet($buyer_wallet->wallet_id, $offer->cryptocurreny_type);
-            $credentials = [
-                'email' => Auth::user()->email,
-                'password' => $request->password
-            ];
+            // $credentials = [
+            //     'email' => Auth::user()->email,
+            //     'password' => $request->password
+            // ];
 
-            if (!auth('api')->attempt($credentials)) {
-                $apiStatus = Response::HTTP_UNPROCESSABLE_ENTITY;
-                $apiMessage = 'Invalid Password';
-                return $this->sendError($apiMessage, $apiStatus);
-            }
+            // if (!auth('api')->attempt($credentials)) {
+            //     $apiStatus = Response::HTTP_UNPROCESSABLE_ENTITY;
+            //     $apiMessage = 'Invalid Password';
+            //     return $this->sendError($apiMessage, $apiStatus);
+            // }
             $status = $this->transactionRepository->transferCoinToAddress(
                 $trade->crypto_amount,
                 $trade->fee_amount,
