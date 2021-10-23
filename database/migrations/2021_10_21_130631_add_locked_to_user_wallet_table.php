@@ -17,7 +17,7 @@ class AddLockedToUserWalletTable extends Migration
             $table->decimal('locked',32,16)->after('balance');
         });
         Schema::table('user_wallet', function (Blueprint $table) {
-            $table->decimal('locked')->default(0)->change();
+            $table->decimal('locked',32,16)->default(0)->change();
         });
     }
 

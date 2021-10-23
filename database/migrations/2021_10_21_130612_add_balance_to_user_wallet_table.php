@@ -17,7 +17,7 @@ class AddBalanceToUserWalletTable extends Migration
             $table->decimal('balance',32,16)->after('wallet_id');
         });
         Schema::table('user_wallet', function (Blueprint $table) {
-            $table->decimal('balance')->default(0)->change();
+            $table->decimal('balance',32,16)->default(0)->change();
         });
     }
 
