@@ -29,7 +29,8 @@ class TradeRepository
         $this->offerRepository = $offerRepository;
     }
 
-    public function start($request) {
+    public function start($request)
+    {
         return $this->trade::create($request);
     }
 
@@ -39,12 +40,12 @@ class TradeRepository
      * @param int $tradeId
      * @return App\Models\Trade
      */
-    public function tradeDetails(int $tradeId): Trade
+    public function tradeDetails($tradeId)
     {
-        return $this->trade->find($tradeId);
+        return Trade::where("trade_id", $tradeId)->first();
     }
 
-     /**
+    /**
      * Update trade details.
      *
      * @param int $tradeId
@@ -53,7 +54,7 @@ class TradeRepository
      */
     public function updateTradeDetails(int $tradeId, $dataUpdate)
     {
-        Trade::where("id", $tradeId)->update($dataUpdate);
+        Trade::where("trade_id", $tradeId)->update($dataUpdate);
         return true;
     }
 

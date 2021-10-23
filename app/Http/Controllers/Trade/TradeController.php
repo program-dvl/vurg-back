@@ -39,7 +39,8 @@ class TradeController extends Controller
      * @param Request $request
      * @return Response
      */
-    public function createTrade(Request $request) {
+    public function createTrade(Request $request)
+    {
         try {
 
             // Server side validations
@@ -66,8 +67,8 @@ class TradeController extends Controller
             $bitgo_wallet = $this->walletRepository->getBitgoWallet($wallet->wallet_id, $offer->cryptocurreny_type);
 
             $market_rate = $this->offerRepository->getBitcoinPrice($offer->preferredCurrency->currency_code);
-            $crypto_amount = $market_rate * $request->amount;
-            $fee_amount = $crypto_amount/100;
+            $crypto_amount = $request->amount / $market_rate;
+            $fee_amount = $crypto_amount / 100;
             $mytime = Carbon::now();
             $tradeData = [];
             $tradeData['offer_id'] = $request->offer_id;
@@ -82,23 +83,26 @@ class TradeController extends Controller
                 throw new \ErrorException('Wallet not found');
             }
             //return $bitgo_wallet;
-            $wallet->balance = $bitgo_wallet['balance']/100000000;
+            $wallet->balance = $bitgo_wallet['balance'] / 100000000;
             $wallet->save();
-            if($trade->crypto_amount > ($wallet->balance - $wallet->locked)) {
+            //dd($wallet);
+            if ($trade->crypto_amount > ($wallet->balance - $wallet->locked)) {
                 throw new \ErrorException('Unable to create trade due to low balance');
             }
             DB::beginTransaction();
             $wallet->locked += $trade->crypto_amount;
             $wallet->save();
             $trade->status()->transitionTo('wait');
+            $trade->save();
             DB::commit();
             // Start trade
             //event(new StartTrade($trade));
             return $this->sendSuccess($trade, 'Trade started successfully');
         } catch (\Exception $e) {
-            DB::rollBack(); 
-            if(isset($trade)) {
-               $trade->status()->transitionTo('reject');
+            DB::rollBack();
+            if (isset($trade)) {
+                $trade->status()->transitionTo('reject');
+                $trade->save();
             }
             return $this->sendError($e->getMessage());
         }
@@ -111,9 +115,10 @@ class TradeController extends Controller
      * @param Request $request
      * @return Response
      */
-    public function cancelTrade($tradeId) {
+    public function cancelTrade($tradeId)
+    {
         try {
-            $trade = $this->tradeRepository->tradeDetails($coinId);
+            $trade = $this->tradeRepository->tradeDetails($tradeId);
             if (!$trade) {
                 return $this->sendError('Trade not found', Response::HTTP_NOT_FOUND);
             }
@@ -127,11 +132,12 @@ class TradeController extends Controller
             }
             DB::beginTransaction();
             $trade->status()->transitionTo('cancel');
+            $trade->save();
             $wallet->locked -= $trade->crypto_amount;
             $wallet->save();
             DB::commit();
             return $this->sendSuccess($trade, 'Trade cancelled successfully');
-        } catch (\Exception $e) { 
+        } catch (\Exception $e) {
             DB::rollBack();
             return $this->sendError($e->getMessage());
         }
@@ -145,15 +151,18 @@ class TradeController extends Controller
      * @param Request $request
      * @return Response
      */
-    public function receivePayment($tradeId) {
+    public function receivePayment($tradeId)
+    {
         try {
-            $trade = $this->tradeRepository->tradeDetails($coinId);
+            $trade = $this->tradeRepository->tradeDetails($tradeId);
             if (!$trade) {
                 return $this->sendError('Trade not found', Response::HTTP_NOT_FOUND);
             }
+            dd($trade->status()->history()->get());
             $trade->status()->transitionTo('payment_received');
+            $trade->save();
             return $this->sendSuccess($trade, 'Trade status changed to receive payment succcessfully');
-        } catch (\Exception $e) { 
+        } catch (\Exception $e) {
             return $this->sendError();
         }
     }
@@ -165,9 +174,10 @@ class TradeController extends Controller
      * @param Request $request
      * @return Response
      */
-    public function acceptPayment(Request $request) {
+    public function acceptPayment(Request $request, $tradeId)
+    {
         try {
-            $trade = $this->tradeRepository->tradeDetails($coinId);
+            $trade = $this->tradeRepository->tradeDetails($tradeId);
             if (!$trade) {
                 return $this->sendError('Trade not found', Response::HTTP_NOT_FOUND);
             }
@@ -175,8 +185,8 @@ class TradeController extends Controller
             if (!$offer) {
                 return $this->sendError('Offer not found', Response::HTTP_NOT_FOUND);
             }
-            if($offer->user_id != Auth::id()) {
-                return $this->sendError('Unauthorized to perform this operation', Response::HTTP_UNAUTHORIZED );
+            if ($offer->user_id != Auth::id()) {
+                return $this->sendError('Unauthorized to perform this operation', Response::HTTP_UNAUTHORIZED);
             }
             $seller_wallet = $this->walletRepository->getUserWallet($offer->user_id, $offer->cryptocurreny_type);
             if (!$seller_wallet) {
@@ -216,10 +226,9 @@ class TradeController extends Controller
             $buyer_wallet->save();
             DB::commit();
             return $this->sendSuccess($trade, 'Trade completed successfully');
-        } catch (\Exception $e) { 
+        } catch (\Exception $e) {
             return $this->sendError($e->getMessage());
         }
-
     }
 
     /**
@@ -229,7 +238,8 @@ class TradeController extends Controller
      * @param Request $request
      * @return Response
      */
-    public function tradeDetails(Request $request, $tradeId) {
+    public function tradeDetails(Request $request, $tradeId)
+    {
         try {
             $trade = $this->tradeRepository->getActiveTradeDetails($tradeId);
             if (!$trade) {
@@ -240,7 +250,4 @@ class TradeController extends Controller
             return $this->sendError($e->getMessage());
         }
     }
-
-
-    
 }
