@@ -46,4 +46,8 @@ class Trade extends Model
             $trade->trade_id = (string) Str::uuid();
         });
     }
+
+    public function userDetails() {
+        return $this->belongsTo('App\Models\User', 'user_id');
+    }
 }

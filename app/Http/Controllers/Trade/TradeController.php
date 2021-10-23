@@ -219,8 +219,27 @@ class TradeController extends Controller
         } catch (\Exception $e) { 
             return $this->sendError($e->getMessage());
         }
+
     }
 
+    /**
+     * Get the trade details
+     * GET|HEAD /trade/{tradeId}
+     *
+     * @param Request $request
+     * @return Response
+     */
+    public function tradeDetails(Request $request, $tradeId) {
+        try {
+            $trade = $this->tradeRepository->getActiveTradeDetails($tradeId);
+            if (!$trade) {
+                return $this->sendError('Trade not found', Response::HTTP_NOT_FOUND);
+            }
+            return $this->sendSuccess($trade, 'Trade details found succcessfully');
+        } catch (\Exception $e) {
+            return $this->sendError($e->getMessage());
+        }
+    }
 
 
     
