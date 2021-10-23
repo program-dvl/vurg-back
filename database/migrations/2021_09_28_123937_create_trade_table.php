@@ -14,7 +14,7 @@ class CreateTradeTable extends Migration
     public function up()
     {
         Schema::create('trade', function (Blueprint $table) {
-            $table->uuid('id')->primary();
+            $table->bigIncrements('id');
             $table->integer('offer_id');
             $table->integer('user_id');
             $table->string('status');

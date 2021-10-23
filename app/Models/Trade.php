@@ -12,13 +12,14 @@ class Trade extends Model
     Use HasStateMachines;
 
     public $stateMachines = [
-        'trade_status' => TradeStatusStateMachine::class
+        'status' => StatusStateMachine::class
     ];   
 
     public $table = 'trade';
 
     protected $fillable = [
         'id',
+        'trade_id',
         'offer_id',
         'user_id',
         'status',
@@ -42,7 +43,7 @@ class Trade extends Model
         parent::boot();
 
         static::creating(function ($trade) {
-            $trade->id = (string) Str::uuid();
+            $trade->trade_id = (string) Str::uuid();
         });
     }
 }

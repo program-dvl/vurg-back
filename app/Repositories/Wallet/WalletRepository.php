@@ -68,10 +68,11 @@ class WalletRepository
      *
      * @return array
      */
-    public function getBitgoWallet($user_id, $coin_id)
+    public function getBitgoWallet($wallet_id, $coin_id)
     {
-        $bitgo = new BitGoSDK(env('BITGO_ACCESS_TOKEN'), $coin_id, true);
-        $bitgo->walletId = $wallet->wallet_id;
+        $coin = $this->getCoin()[$coin_id];
+        $bitgo = new BitGoSDK(env('BITGO_ACCESS_TOKEN'), $coin['id'], true);
+        $bitgo->walletId = $wallet_id;
         return $bitgo->getWallet($coin_id);
     }
 
@@ -135,7 +136,7 @@ class WalletRepository
     public function getCoin() {
         return [
             "1" => [
-                'id' => CurrencyCode::BITCOIN_TESTNET,
+                'id' => CurrencyCode::BITCOIN_TESTNET, 
                 'name' => 'Bitcoin',
                 'coin_vurg_id' => 1
             ]

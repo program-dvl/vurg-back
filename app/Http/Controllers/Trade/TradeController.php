@@ -65,23 +65,23 @@ class TradeController extends Controller
             }
             $bitgo_wallet = $this->walletRepository->getBitgoWallet($wallet->wallet_id, $offer->cryptocurreny_type);
 
-            $market_rate = $this->walletRepository->getExchangeRateByCurrency($offer->preferredCurrency->currency_code);
+            $market_rate = $this->offerRepository->getExchangeRateByCurrency($offer->preferredCurrency->currency_code);
             $crypto_amount = $market_rate * $request->amount;
             $fee_amount = $crypto_amount/100;
             $mytime = Carbon::now();
             $tradeData = [];
             $tradeData['offer_id'] = $request->offer_id;
-            $tradeData['status'] = 'Initiated';
             $tradeData['user_id'] = Auth::id();
             $tradeData['start_time'] = $mytime->toDateTimeString();
             $tradeData['currency_amount'] = $request->amount;
             $tradeData['crypto_amount'] = $crypto_amount - $fee_amount;
-            $tradeData['fee_amount'] = $free_amount;
+            $tradeData['fee_amount'] = $fee_amount;
             $tradeData['market_rate'] = $market_rate;
             $trade = $this->tradeRepository->start($tradeData);
             if (empty($bitgo_wallet)) {
                 throw new \ErrorException('Wallet not found');
             }
+            //return $bitgo_wallet;
             $wallet->balance = $bitgo_wallet['balance']/100000000;
             $wallet->save();
             if($trade->crypto_amount > ($wallet->balance - $wallet->locked)) {
@@ -90,15 +90,15 @@ class TradeController extends Controller
             DB::beginTransaction();
             $wallet->locked += $trade->crypto_amount;
             $wallet->save();
-            $trade->tradeStatus()->transitionTo('wait');
+            $trade->status()->transitionTo('wait');
             DB::commit();
             // Start trade
-            event(new StartTrade($trade));
+            //event(new StartTrade($trade));
             return $this->sendSuccess($trade, 'Trade started successfully');
         } catch (\Exception $e) {
             DB::rollBack(); 
             if(isset($trade)) {
-                $trade->tradeStatus()->transitionTo('reject');
+               $trade->status()->transitionTo('reject');
             }
             return $this->sendError($e->getMessage());
         }
@@ -126,7 +126,7 @@ class TradeController extends Controller
                 return $this->sendError('Wallet not found', Response::HTTP_NOT_FOUND);
             }
             DB::beginTransaction();
-            $trade->tradeStatus()->transitionTo('cancel');
+            $trade->status()->transitionTo('cancel');
             $wallet->locked -= $trade->crypto_amount;
             $wallet->save();
             DB::commit();
@@ -151,7 +151,7 @@ class TradeController extends Controller
             if (!$trade) {
                 return $this->sendError('Trade not found', Response::HTTP_NOT_FOUND);
             }
-            $trade->tradeStatus()->transitionTo('payment_received');
+            $trade->status()->transitionTo('payment_received');
             return $this->sendSuccess($trade, 'Trade status changed to receive payment succcessfully');
         } catch (\Exception $e) { 
             return $this->sendError();
@@ -208,7 +208,7 @@ class TradeController extends Controller
                 return $this->sendError($apiMessage, $apiStatus);
             }
             DB::beginTransaction();
-            $trade->tradeStatus()->transitionTo('done');
+            $trade->status()->transitionTo('done');
             $seller_wallet->locked -= $trade->crypto_amount;
             $seller_wallet->balance -= $trade->crypto_amount;
             $seller_wallet->save();

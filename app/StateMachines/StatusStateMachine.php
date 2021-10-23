@@ -4,7 +4,7 @@ namespace App\StateMachines;
 
 use Asantibanez\LaravelEloquentStateMachines\StateMachines\StateMachine;
 
-class TradeStatusStateMachine extends StateMachine
+class StatusStateMachine extends StateMachine
 {
     public function recordHistory(): bool
     {
