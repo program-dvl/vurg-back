@@ -5,21 +5,20 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Str;
 use Asantibanez\LaravelEloquentStateMachines\Traits\HasStateMachines;
-use App\StateMachines\StatusStateMachine; 
+use App\StateMachines\StatusStateMachine;
 
 class Trade extends Model
 {
-    Use HasStateMachines;
+    use HasStateMachines;
 
     public $stateMachines = [
         'status' => StatusStateMachine::class
-    ];   
+    ];
 
     public $table = 'trade';
 
     protected $fillable = [
         'id',
-        'trade_id',
         'offer_id',
         'user_id',
         'status',
@@ -43,11 +42,12 @@ class Trade extends Model
         parent::boot();
 
         static::creating(function ($trade) {
-            $trade->trade_id = (string) Str::uuid();
+            $trade->id = (string) Str::uuid();
         });
     }
 
-    public function userDetails() {
+    public function userDetails()
+    {
         return $this->belongsTo('App\Models\User', 'user_id');
     }
 }

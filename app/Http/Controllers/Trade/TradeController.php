@@ -82,10 +82,8 @@ class TradeController extends Controller
             if (empty($bitgo_wallet)) {
                 throw new \ErrorException('Wallet not found');
             }
-            //return $bitgo_wallet;
             $wallet->balance = $bitgo_wallet['balance'] / 100000000;
             $wallet->save();
-            //dd($wallet);
             if ($trade->crypto_amount > ($wallet->balance - $wallet->locked)) {
                 throw new \ErrorException('Unable to create trade due to low balance');
             }
@@ -158,7 +156,6 @@ class TradeController extends Controller
             if (!$trade) {
                 return $this->sendError('Trade not found', Response::HTTP_NOT_FOUND);
             }
-            dd($trade->status()->history()->get());
             $trade->status()->transitionTo('payment_received');
             $trade->save();
             return $this->sendSuccess($trade, 'Trade status changed to receive payment succcessfully');

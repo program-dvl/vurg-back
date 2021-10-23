@@ -42,7 +42,7 @@ class TradeRepository
      */
     public function tradeDetails($tradeId)
     {
-        return Trade::where("trade_id", $tradeId)->first();
+        return Trade::where("id", $tradeId)->first();
     }
 
     /**
@@ -54,7 +54,7 @@ class TradeRepository
      */
     public function updateTradeDetails(int $tradeId, $dataUpdate)
     {
-        Trade::where("trade_id", $tradeId)->update($dataUpdate);
+        Trade::where("id", $tradeId)->update($dataUpdate);
         return true;
     }
 
