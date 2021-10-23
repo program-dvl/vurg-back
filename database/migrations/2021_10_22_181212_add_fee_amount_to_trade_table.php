@@ -14,7 +14,7 @@ class AddFeeAmountToTradeTable extends Migration
     public function up()
     {
         Schema::table('trade', function (Blueprint $table) {
-            $table->decimal('fee_amount',15,10);
+            $table->decimal('fee_amount',32,16);
         });
     }
 

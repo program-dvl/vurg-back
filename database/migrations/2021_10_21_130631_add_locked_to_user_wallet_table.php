@@ -14,7 +14,7 @@ class AddLockedToUserWalletTable extends Migration
     public function up()
     {
         Schema::table('user_wallet', function (Blueprint $table) {
-            $table->decimal('locked',15,10);
+            $table->decimal('locked',32,16);
         });
         Schema::table('user_wallet', function (Blueprint $table) {
             $table->decimal('locked')->default(0)->change();

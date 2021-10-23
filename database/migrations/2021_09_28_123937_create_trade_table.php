@@ -19,8 +19,8 @@ class CreateTradeTable extends Migration
             $table->integer('user_id');
             $table->string('status');
             $table->dateTime('start_time');
-            $table->decimal('currency_amount',15,2)->nullable();
-            $table->decimal('crypto_amount',15,10)->nullable();
+            $table->decimal('currency_amount',32,4)->nullable();
+            $table->decimal('crypto_amount',32,16)->nullable();
             $table->timestamps();
             $table->softDeletes();
         });
