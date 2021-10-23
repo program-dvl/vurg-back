@@ -14,7 +14,7 @@ class AddMarketRateToTradeTable extends Migration
     public function up()
     {
         Schema::table('trade', function (Blueprint $table) {
-            $table->decimal('market_rate',15,10);
+            $table->decimal('market_rate',32,16)->after('crypto_amount');
         });
     }
 

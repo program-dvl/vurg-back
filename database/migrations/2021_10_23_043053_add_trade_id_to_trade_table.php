@@ -14,6 +14,14 @@ class AddTradeIdToTradeTable extends Migration
     public function up()
     {
         Schema::table('trade', function (Blueprint $table) {
+            $table->dropColumn('id');
+        });
+        Schema::table('trade', function (Blueprint $table) {
+            $table->bigIncrements('id')->first();
+            $table->decimal('currency_amount',32,4)->nullable()->change();
+            $table->decimal('crypto_amount',32,16)->nullable()->change();
+        });
+        Schema::table('trade', function (Blueprint $table) {
             $table->uuid('trade_id')->unique()->after('id');
         });
     }
