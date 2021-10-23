@@ -67,7 +67,7 @@ class TradeRepository
     {
         $trade = $this->trade->with(['userDetails'])->find($tradeId);
         $offer = $this->offerRepository->getOfferDetailsByOfferId($trade->offer_id);
-        $tradeStartTime = $trade->created_at;
+        $tradeStartTime = \Carbon\Carbon::parse($trade->start_time);
         $offerExpiryInMinute = $offer->offer_time_limit;
         $tradeExpiryTime = $tradeStartTime->addMinutes($offerExpiryInMinute);
         if ($tradeExpiryTime->lte(\Carbon\Carbon::now()) && $trade->status != 'cancel') {
