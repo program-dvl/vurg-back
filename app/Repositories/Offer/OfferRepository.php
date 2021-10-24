@@ -250,7 +250,6 @@ class OfferRepository
         return $convertedAmount * $amount;
     }
 
-
     public function getNewExchangeRate() {
         $url = "http://api.nomics.com/v1/exchange-rates?key=656dc0785146c218932c919f5c7fdb7d798ee21a";
         return json_decode($this->curl_get_file_contents($url), true);

@@ -28,6 +28,8 @@ class UserWallet extends Model
         'passphrase',
         'wallet_id',
         'coin_id',
+        'balance',
+        'locked',
         'created_at',
         'updated_at'
     ];

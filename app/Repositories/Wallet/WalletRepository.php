@@ -53,6 +53,30 @@ class WalletRepository
         return $allWallets;
     }
 
+    /**
+     * get user wallet by coin id.
+     *
+     * @return array
+     */
+    public function getUserWallet($user_id, $coin_id)
+    {
+        return $this->userWallet->where('user_id', $user_id)->where('coin_id', $coin_id)->latest('created_at')->first();
+    }
+
+    /**
+     * get bitgo wallet by wallet id and coin id.
+     *
+     * @return array
+     */
+    public function getBitgoWallet($wallet_id, $coin_id)
+    {
+        $coin = $this->getCoin()[$coin_id];
+        $bitgo = new BitGoSDK(env('BITGO_ACCESS_TOKEN'), $coin['id'], true);
+        $bitgo->walletId = $wallet_id;
+        return $bitgo->getWallet($coin_id);
+    }
+
+
     public function allCoins() {
         return [
             [
@@ -112,7 +136,7 @@ class WalletRepository
     public function getCoin() {
         return [
             "1" => [
-                'id' => CurrencyCode::BITCOIN_TESTNET,
+                'id' => CurrencyCode::BITCOIN_TESTNET, 
                 'name' => 'Bitcoin',
                 'coin_vurg_id' => 1
             ]
