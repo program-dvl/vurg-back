@@ -14,6 +14,7 @@ use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Auth;
 use Validator;
 use App\Events\GenerateWallet;
+use App\Events\Notification;
 
 class AuthController extends Controller
 {
@@ -130,7 +131,7 @@ class AuthController extends Controller
 
             return $this->sendError($apiMessage, $apiStatus);
         }
-
+        
         $user = $this->userRepository->userDetailsByEmail($request->email);
         return $this->SendSuccess($this->respondWithToken($token, $user));
         

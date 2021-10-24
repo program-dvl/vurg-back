@@ -8,6 +8,8 @@ use Illuminate\Foundation\Support\Providers\EventServiceProvider as ServiceProvi
 use Illuminate\Support\Facades\Event;
 use App\Listeners\GenerateWalletFired;
 use App\Events\GenerateWallet;
+use App\Listeners\NotificationFired;
+use App\Events\Notification;
 
 class EventServiceProvider extends ServiceProvider
 {
@@ -22,6 +24,9 @@ class EventServiceProvider extends ServiceProvider
         ],
         GenerateWallet::class => [
             GenerateWalletFired::class,
+        ],
+        Notification::class => [
+            NotificationFired::class,
         ],
     ];
 
