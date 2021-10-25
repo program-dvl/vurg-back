@@ -197,7 +197,6 @@ class TradeController extends Controller
                 }
             }
             $trade->status()->transitionTo('payment_received');
-            $trade->save();
             return $this->sendSuccess($trade, 'Trade status changed to receive payment succcessfully');
         } catch (\Exception $e) {
             return $this->sendError();
