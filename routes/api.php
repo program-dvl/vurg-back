@@ -35,10 +35,10 @@ Route::get('currencies', 'App\Http\Controllers\User\CurrencyController@index');
 // Get All Countries with Phone code
 Route::get('countries', 'App\Http\Controllers\User\CountryController@index');
 
-// Get All Settings
-Route::get('settings', 'App\Http\Controllers\User\SettingsController@index');
-
 Route::middleware(['auth:api', 'lastActivity'])->group(function () {
+    // Get All Settings
+    Route::get('settings', 'App\Http\Controllers\User\SettingsController@index');
+
     // Route::get('user', 'App\Http\Controllers\User\UserController@index');
     Route::get('email/resend', 'App\Http\Controllers\Auth\VerificationController@resend')->name('verification.resend');
     Route::post('otp/send', 'App\Http\Controllers\Auth\VerificationController@sendOTP')->name('verify.otp');
@@ -86,6 +86,9 @@ Route::middleware(['auth:api', 'lastActivity'])->group(function () {
 
     // Get Feedback
     Route::post('feedback', 'App\Http\Controllers\Offer\OfferTradeFeedbackController@index');
+
+    // Add Feedback
+    Route::post('add/feedback', 'App\Http\Controllers\Offer\OfferTradeFeedbackController@addFeedback');
 
     // Get user wallets
     Route::get('wallets', 'App\Http\Controllers\Wallet\WalletController@index');

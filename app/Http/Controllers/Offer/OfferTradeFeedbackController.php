@@ -7,9 +7,11 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Http\Request;
 use App\Models\OfferTradeFeedback;
 use App\Models\OfferTags;
+use App\Models\Offers;
 use Illuminate\Http\Response;
 use Validator;
 use App\Repositories\Offer\OfferTradeFeedbackRepository;
+use Carbon\Carbon;
 
 class OfferTradeFeedbackController extends Controller
 {
@@ -72,5 +74,60 @@ class OfferTradeFeedbackController extends Controller
             dd($e->getMessage());
             return $this->sendError();
         }
+    }
+
+    public function addFeedback(Request $request)
+    {
+        $input = $request->all();
+            
+        $validator = Validator::make($request->all(), [
+            'offer_id' => 'required',
+            'user_id' => 'required',
+        ]);
+
+        if ($validator->fails()) {
+            return $this->sendValidationError($validator->messages());
+        }
+
+        $offerDetails = Offers::find($input['offer_id']);
+        if($offerDetails->user_id == Auth::id()) {
+            $fromUser = Auth::id();
+            $toUser = $input['user_id'];
+
+            if($offerDetails->offer_type == 1) {
+                $fromBuyer = Auth::id();
+                $fromSeller = $input['user_id'];
+            } else {
+                $fromBuyer = $input['user_id'];
+                $fromSeller = Auth::id();
+            }
+        } else {
+            $fromUser = $input['user_id'];
+            $toUser = Auth::id();
+
+            if($offerDetails->offer_type == 1) {
+                $fromBuyer = $input['user_id'];
+                $fromSeller = Auth::id();
+            } else {
+                $fromBuyer = Auth::id();
+                $fromSeller = $input['user_id'];
+            }
+        }
+
+        $dataInsert = [
+            'from_user' => $fromUser,
+            'to_user' => $toUser,
+            'from_buyer' => $fromBuyer,
+            'from_seller' => $fromSeller,
+            'offer_id' => $input['offer_id'],
+            'positive' => $input['positive'],
+            'negative' => $input['negative'],
+            'comment' => !empty($input['comment']) ? $input['comment'] : '',
+            'created_at' => Carbon::now()
+        ];
+
+        $this->offerTradeFeedbackRepository->addOfferFeedback($dataInsert);
+
+        return $this->sendSuccess([], 'Feedback added successfully.');
     }
 }
