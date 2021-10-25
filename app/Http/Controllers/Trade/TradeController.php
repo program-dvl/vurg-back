@@ -14,6 +14,7 @@ use Carbon\Carbon;
 use App\Events\StartTrade;
 use Illuminate\Support\Facades\DB;
 use App\Repositories\Transaction\TransactionRepository;
+use App\Events\Notification;
 
 class TradeController extends Controller
 {
@@ -98,6 +99,10 @@ class TradeController extends Controller
             DB::commit();
             // Start trade
             //event(new StartTrade($trade));
+            $notificationId = 2; // For trade started notification
+            $notificationText = 'Trade '.$trade->id. ' escrow funded now';
+            $modelId = $trade->id;
+            event(new Notification($notificationId, $notificationText, $modelId));
             return $this->sendSuccess($trade, 'Trade started successfully');
         } catch (\Exception $e) {
             DB::rollBack();
@@ -185,9 +190,9 @@ class TradeController extends Controller
             if (!$offer) {
                 return $this->sendError('Offer not found', Response::HTTP_NOT_FOUND);
             }
-            // if ($offer->user_id != Auth::id()) {
-            //     return $this->sendError('Unauthorized to perform this operation', Response::HTTP_UNAUTHORIZED);
-            // }
+            if ($offer->user_id != Auth::id()) {
+                return $this->sendError('Unauthorized to perform this operation', Response::HTTP_UNAUTHORIZED);
+            }
             $seller_wallet = $this->walletRepository->getUserWallet($offer->user_id, $offer->cryptocurreny_type);
             if (!$seller_wallet) {
                 return $this->sendError('Wallet not found', Response::HTTP_NOT_FOUND);
@@ -246,6 +251,39 @@ class TradeController extends Controller
                 return $this->sendError('Trade not found', Response::HTTP_NOT_FOUND);
             }
             return $this->sendSuccess($trade, 'Trade details found succcessfully');
+        } catch (\Exception $e) {
+            return $this->sendError($e->getMessage());
+        }
+    }
+
+    /**
+     * Get the trade history
+     * GET|HEAD /trade-history
+     *
+     * @param Request $request
+     * @return Response
+     */
+    public function tradeHistory(Request $request) {
+        try {
+            // Server side validations
+            $validation = [
+                'trade_type' => 'in:buy,sell',
+                'start_date' => 'date_format:Y-m-d',
+                'end_date' => 'date_format:Y-m-d'
+            ];
+
+            $validator = Validator::make($request->all(), $validation);
+
+            // If request parameter have any error
+            if ($validator->fails()) {
+                return $this->sendValidationError($validator->messages());
+            }
+
+            $trades = $this->tradeRepository->getTradeHistory($request->all());
+            if (!count($trades)) {
+                return $this->sendError('No trade history found', Response::HTTP_NOT_FOUND);
+            }
+            return $this->sendSuccess($trades, 'Trade history found succcessfully');
         } catch (\Exception $e) {
             return $this->sendError($e->getMessage());
         }
