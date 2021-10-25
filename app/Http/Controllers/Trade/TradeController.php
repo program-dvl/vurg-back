@@ -84,6 +84,9 @@ class TradeController extends Controller
             $market_rate = $this->offerRepository->getBitcoinPrice($offer->preferredCurrency->currency_code);
             $crypto_amount = $request->amount / $market_rate;
             $fee_amount = $crypto_amount / 100;
+            if ($crypto_amount < 0.0000546 || $fee_amount < 0.0000546) {
+                throw new \ErrorException('Unable to create trade due to low amount');
+            }
             # TODO: Identify the above amounts above the minimum
             $mytime = Carbon::now();
             $tradeData = [];
