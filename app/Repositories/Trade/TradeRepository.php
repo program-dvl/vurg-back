@@ -5,6 +5,7 @@ namespace App\Repositories\Trade;
 use App\Models\Trade;
 use App\Repositories\User\UserRepository;
 use App\Repositories\Offer\OfferRepository;
+use Illuminate\Support\Facades\Auth;
 
 class TradeRepository
 {
@@ -78,5 +79,31 @@ class TradeRepository
         $trade['offer_detail'] = $offer;
         $trade['counter_user_details'] = $this->userRepository->userDetails($offer->user_id);
         return $trade;
+    }
+
+    /**
+     * get active trade details.
+     *
+     */
+    public function getTradeHistory($filters) {
+        $trades = $this->trade->where('user_id', Auth::id());
+        $trades = $trades->with(['Offer', 'Offer.paymentMethod']);
+        if (!empty($filters['payment_method'])) {
+            $trades = $trades->whereHas('Offer', function($q) use($filters){
+                $q->where('payment_method', '=', $filters['payment_method']);
+            });
+        }
+
+        if (!empty($filters['start_date']) || !empty($filters['end_date'])) {
+            if (!empty($filters['start_date'])) {
+                $trades = $trades->where('start_time', '>=' ,$filters['start_date']);
+            }
+            if (!empty($filters['end_date'])) {
+                $trades = $trades->where('start_time', '<=',$filters['end_date']);
+            }
+        }
+
+        $trades = $trades->get();
+        return $trades;
     }
 }

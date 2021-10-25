@@ -50,4 +50,8 @@ class Trade extends Model
     {
         return $this->belongsTo('App\Models\User', 'user_id');
     }
+
+    public function offer() {
+        return $this->belongsTo('App\Models\Offers','offer_id');
+    }
 }

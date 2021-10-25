@@ -123,6 +123,8 @@ Route::middleware(['auth:api', 'lastActivity'])->group(function () {
 
     //Make All notifications to read
     Route::get('notification/mark-as-read', 'App\Http\Controllers\Notification\NotificationController@markAsReadNotifications');
+
+    Route::post('trade-history', 'App\Http\Controllers\Trade\TradeController@tradeHistory');
     
 });
 Route::get('express', 'App\Http\Controllers\User\UserController@express');

@@ -31,6 +31,7 @@ class NotificationFired
         $notificationInsert = [
             'notification_id' => $event->notificationId,
             'notification_text' => $event->notificationtext,
+            'model_id' => $event->modelId,
             'user_id' => Auth::id()
         ];
         DB::table('user_notifications')->insert($notificationInsert);

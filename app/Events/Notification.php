@@ -11,15 +11,17 @@ class Notification
 
     public $notificationId;
     public $notificationtext;
+    public $modelId;
 
     /**
      * Create a new event instance.
      *
      * @return void
      */
-    public function __construct($notificationId, $notificationtext)
+    public function __construct($notificationId, $notificationtext, $modelId)
     {
         $this->notificationId = $notificationId;
         $this->notificationtext = $notificationtext;
+        $this->modelId = $modelId;
     }
 }

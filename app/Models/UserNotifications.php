@@ -25,6 +25,7 @@ class UserNotifications extends Model
         'notification_id',
         'notification_text',
         'is_read',
+        'model_id',
         'created_at',
         'updated_at'
     ];
