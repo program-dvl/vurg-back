@@ -64,15 +64,27 @@ class TradeController extends Controller
             if (!$offer) {
                 return $this->sendError('Offer not found', Response::HTTP_NOT_FOUND);
             }
-            $wallet = $this->walletRepository->getUserWallet($offer->user_id, $offer->cryptocurreny_type);
-            if (!$wallet) {
-                return $this->sendError('Wallet not found', Response::HTTP_NOT_FOUND);
+            if ($offer->user_id == Auth::id()) {
+                return $this->sendError('Unauthorized to perform this operation', Response::HTTP_UNAUTHORIZED);
             }
+            if ($offer->offer_type == 1) {
+                $wallet = $this->walletRepository->getUserWallet($offer->user_id, $offer->cryptocurreny_type);
+                if (!$wallet) {
+                    return $this->sendError('Wallet not found', Response::HTTP_NOT_FOUND);
+                }
+            } else {
+                $wallet = $this->walletRepository->getUserWallet(Auth::id(), $offer->cryptocurreny_type);
+                if (!$wallet) {
+                    return $this->sendError('Wallet not found', Response::HTTP_NOT_FOUND);
+                }
+            }
+
             $bitgo_wallet = $this->walletRepository->getBitgoWallet($wallet->wallet_id, $offer->cryptocurreny_type);
 
             $market_rate = $this->offerRepository->getBitcoinPrice($offer->preferredCurrency->currency_code);
             $crypto_amount = $request->amount / $market_rate;
             $fee_amount = $crypto_amount / 100;
+            # TODO: Identify the above amounts above the minimum
             $mytime = Carbon::now();
             $tradeData = [];
             $tradeData['offer_id'] = $request->offer_id;
@@ -95,12 +107,11 @@ class TradeController extends Controller
             $wallet->locked += $trade->crypto_amount;
             $wallet->save();
             $trade->status()->transitionTo('wait');
-            $trade->save();
             DB::commit();
             // Start trade
             //event(new StartTrade($trade));
             $notificationId = 2; // For trade started notification
-            $notificationText = 'Trade '.$trade->id. ' escrow funded now';
+            $notificationText = 'Trade ' . $trade->id . ' escrow funded now';
             $modelId = $trade->id;
             event(new Notification($notificationId, $notificationText, $modelId));
             return $this->sendSuccess($trade, 'Trade started successfully');
@@ -108,8 +119,7 @@ class TradeController extends Controller
             DB::rollBack();
             if (isset($trade)) {
                 $trade->status()->transitionTo('reject');
-                $trade->save();
-            } 
+            }
             return $this->sendError($e->getMessage());
         }
     }
@@ -132,13 +142,22 @@ class TradeController extends Controller
             if (!$offer) {
                 return $this->sendError('Offer not found', Response::HTTP_NOT_FOUND);
             }
-            $wallet = $this->walletRepository->getUserWallet($offer->user_id, $offer->cryptocurreny_type);
-            if (!$wallet) {
-                return $this->sendError('Wallet not found', Response::HTTP_NOT_FOUND);
+            if ($offer->user_id != Auth::id() && $trade->user_id != Auth::id()) {
+                return $this->sendError('Unauthorized to perform this operation', Response::HTTP_UNAUTHORIZED);
+            }
+            if ($offer->offer_type == 1) {
+                $wallet = $this->walletRepository->getUserWallet($offer->user_id, $offer->cryptocurreny_type);
+                if (!$wallet) {
+                    return $this->sendError('Wallet not found', Response::HTTP_NOT_FOUND);
+                }
+            } else {
+                $wallet = $this->walletRepository->getUserWallet($trade->user_id, $offer->cryptocurreny_type);
+                if (!$wallet) {
+                    return $this->sendError('Wallet not found', Response::HTTP_NOT_FOUND);
+                }
             }
             DB::beginTransaction();
             $trade->status()->transitionTo('cancel');
-            $trade->save();
             $wallet->locked -= $trade->crypto_amount;
             $wallet->save();
             DB::commit();
@@ -163,6 +182,19 @@ class TradeController extends Controller
             $trade = $this->tradeRepository->tradeDetails($tradeId);
             if (!$trade) {
                 return $this->sendError('Trade not found', Response::HTTP_NOT_FOUND);
+            }
+            $offer = $this->offerRepository->getOfferDetailsByOfferId($trade->offer_id);
+            if (!$offer) {
+                return $this->sendError('Offer not found', Response::HTTP_NOT_FOUND);
+            }
+            if ($offer->offer_type == 1) {
+                if ($trade->user_id != Auth::id()) {
+                    return $this->sendError('Unauthorized to perform this operation', Response::HTTP_UNAUTHORIZED);
+                }
+            } else {
+                if ($offer->user_id != Auth::id()) {
+                    return $this->sendError('Unauthorized to perform this operation', Response::HTTP_UNAUTHORIZED);
+                }
             }
             $trade->status()->transitionTo('payment_received');
             $trade->save();
@@ -190,32 +222,36 @@ class TradeController extends Controller
             if (!$offer) {
                 return $this->sendError('Offer not found', Response::HTTP_NOT_FOUND);
             }
-            if ($offer->user_id != Auth::id()) {
-                return $this->sendError('Unauthorized to perform this operation', Response::HTTP_UNAUTHORIZED);
-            }
-            $seller_wallet = $this->walletRepository->getUserWallet($offer->user_id, $offer->cryptocurreny_type);
-            if (!$seller_wallet) {
+            $offer_wallet = $this->walletRepository->getUserWallet($offer->user_id, $offer->cryptocurreny_type);
+            if (!$offer_wallet) {
                 return $this->sendError('Wallet not found', Response::HTTP_NOT_FOUND);
             }
-            $buyer_wallet = $this->walletRepository->getUserWallet($trade->user_id, $offer->cryptocurreny_type);
-            if (!$buyer_wallet) {
+            $trade_wallet = $this->walletRepository->getUserWallet($trade->user_id, $offer->cryptocurreny_type);
+            if (!$trade_wallet) {
                 return $this->sendError('Wallet not found', Response::HTTP_NOT_FOUND);
             }
-            $buyer_bitgo_wallet = $this->walletRepository->getBitgoWallet($buyer_wallet->wallet_id, $offer->cryptocurreny_type);
-            // $credentials = [
-            //     'email' => Auth::user()->email,
-            //     'password' => $request->password
-            // ];
+            if ($offer->offer_type == 1) {
+                if ($offer->user_id != Auth::id()) {
+                    return $this->sendError('Unauthorized to perform this operation', Response::HTTP_UNAUTHORIZED);
+                }
+                $buyer_wallet = $trade_wallet;
+                $seller_wallet = $offer_wallet;
+            } else {
+                if ($trade->user_id != Auth::id()) {
+                    return $this->sendError('Unauthorized to perform this operation', Response::HTTP_UNAUTHORIZED);
+                }
+                $buyer_wallet = $offer_wallet;
+                $seller_wallet = $trade_wallet;
+            }
 
-            // if (!auth('api')->attempt($credentials)) {
-            //     $apiStatus = Response::HTTP_UNPROCESSABLE_ENTITY;
-            //     $apiMessage = 'Invalid Password';
-            //     return $this->sendError($apiMessage, $apiStatus);
-            // }
+            $bitgo_wallet = $this->walletRepository->getBitgoWallet($buyer_wallet->wallet_id, $offer->cryptocurreny_type);
+            if (!$bitgo_wallet) {
+                return $this->sendError('Wallet not found', Response::HTTP_NOT_FOUND);
+            }
             $status = $this->transactionRepository->transferCoinToAddress(
                 $trade->crypto_amount,
                 $trade->fee_amount,
-                $buyer_bitgo_wallet['receiveAddress']['address']
+                $bitgo_wallet['receiveAddress']['address']
             );
             if (!$status) {
                 $apiStatus = Response::HTTP_UNPROCESSABLE_ENTITY;
@@ -263,7 +299,8 @@ class TradeController extends Controller
      * @param Request $request
      * @return Response
      */
-    public function tradeHistory(Request $request) {
+    public function tradeHistory(Request $request)
+    {
         try {
             // Server side validations
             $validation = [
