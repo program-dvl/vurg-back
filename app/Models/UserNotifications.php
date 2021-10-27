@@ -31,6 +31,6 @@ class UserNotifications extends Model
     ];
 
     public function notifications() {
-        return $this->belongsToz('App\Models\Notifications','notification_id');
+        return $this->belongsTo('App\Models\Notifications','notification_id');
     }
 }
