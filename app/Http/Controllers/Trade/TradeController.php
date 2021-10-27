@@ -78,12 +78,15 @@ class TradeController extends Controller
                     return $this->sendError('Wallet not found', Response::HTTP_NOT_FOUND);
                 }
             }
-
+            
             $bitgo_wallet = $this->walletRepository->getBitgoWallet($wallet->wallet_id, $offer->cryptocurreny_type);
-
+            
             $market_rate = $this->offerRepository->getBitcoinPrice($offer->preferredCurrency->currency_code);
             $crypto_amount = $request->amount / $market_rate;
+            
             $fee_amount = $crypto_amount / 100;
+
+            $fee_amount = number_format($fee_amount, 10);
             if ($crypto_amount < 0.0000546 || $fee_amount < 0.0000546) {
                 throw new \ErrorException('Unable to create trade due to low amount');
             }
@@ -102,7 +105,8 @@ class TradeController extends Controller
                 throw new \ErrorException('Wallet not found');
             }
             $wallet->balance = $bitgo_wallet['balance'] / 100000000;
-            $wallet->save();
+            $wallet->save(); 
+            
             if ($trade->crypto_amount > ($wallet->balance - $wallet->locked)) {
                 throw new \ErrorException('Unable to create trade due to low balance');
             }

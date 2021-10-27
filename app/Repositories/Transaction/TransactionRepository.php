@@ -70,6 +70,7 @@ class TransactionRepository
     public function isHavingSufficientFunds($amount) {
         $coinId = CurrencyCode::BITCOIN_TESTNET;
         $wallet = $this->userWallet->where('user_id', Auth::id())->where('coin_id', 1)->latest('created_at')->first();
+        $userWallet = $wallet;
         if (!empty($wallet)) {
             
             $bitgo = new BitGoSDK(env('BITGO_ACCESS_TOKEN'), $coinId, true);
@@ -81,6 +82,11 @@ class TransactionRepository
             // Entered amount is less then wallet balance retun insuffecient fund
             if (!$flag) {
                 return $flag;
+            }
+            
+            // If amount is greter then available balace - locked escrow balance.
+            if ($amount > ($balance - $userWallet->locked)) {
+                return false;
             }
 
             // Entered amount is less minimum vurg transaction fee balance retun insuffecient fund
