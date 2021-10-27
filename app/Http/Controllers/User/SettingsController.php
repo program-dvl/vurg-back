@@ -29,11 +29,11 @@ class SettingsController extends Controller
             if(!empty($userSetting)) {
                 $settings[$key]['web'] = $userSetting->web;
                 $settings[$key]['email'] = $userSetting->email;
-                $settings[$key]['telegram'] = $userSetting->telegram;
-                $settings[$key]['app'] = $userSetting->app;
+              //  $settings[$key]['telegram'] = $userSetting->telegram;
+              //  $settings[$key]['app'] = $userSetting->app;
                 $settings[$key]['other_setting'] = $userSetting->other_setting;
             } else {
-                $settings[$key]['web'] = $settings[$key]['email'] = $settings[$key]['telegram'] = $settings[$key]['app'] = $settings[$key]['other_setting'] = 0;
+                $settings[$key]['web'] = $settings[$key]['email'] = $settings[$key]['other_setting'] = 0;
             }
             
         }
