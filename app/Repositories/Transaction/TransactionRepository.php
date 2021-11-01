@@ -68,12 +68,12 @@ class TransactionRepository
     }
 
     public function isHavingSufficientFunds($amount) {
-        $coinId = CurrencyCode::BITCOIN_TESTNET;
+        $coinId = CurrencyCode::BITCOIN;
         $wallet = $this->userWallet->where('user_id', Auth::id())->where('coin_id', 1)->latest('created_at')->first();
         $userWallet = $wallet;
         if (!empty($wallet)) {
             
-            $bitgo = new BitGoSDK(env('BITGO_ACCESS_TOKEN'), $coinId, true);
+            $bitgo = new BitGoSDK(env('BITGO_ACCESS_TOKEN'), $coinId, false);
             $bitgo->walletId = $wallet->wallet_id;
             $wallet = $bitgo->getWallet($coinId);
             $balance = $wallet['balance']/100000000; 
@@ -122,7 +122,7 @@ class TransactionRepository
     }
 
     public function transferCoinToAddress($amount, $feeAmount, $address) {
-        $coin = CurrencyCode::BITCOIN_TESTNET;
+        $coin = CurrencyCode::BITCOIN;
         $wallet = $this->userWallet->where('user_id', Auth::id())->where('coin_id', 1)->latest('created_at')->first();
         $passPharse = $wallet->passphrase;
         $bitgoExpress = new BitGoExpress($this->hostname, $this->port, $coin);

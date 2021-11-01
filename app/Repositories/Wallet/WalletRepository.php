@@ -38,7 +38,7 @@ class WalletRepository
         foreach ($allCoins as $key => $coin) {
             $wallet = $this->userWallet->where('user_id', Auth::id())->where('coin_id', $coin['coin_vurg_id'])->latest('created_at')->first();
             if (!empty($wallet)) {
-                $bitgo = new BitGoSDK(env('BITGO_ACCESS_TOKEN'), $coin['id'], true);
+                $bitgo = new BitGoSDK(env('BITGO_ACCESS_TOKEN'), $coin['id'], false);
                 $bitgo->walletId = $wallet->wallet_id;
                 $wallet = $bitgo->getWallet($coin['id']);
                 $lable = explode("-",$wallet['label']);
@@ -71,7 +71,7 @@ class WalletRepository
     public function getBitgoWallet($wallet_id, $coin_id)
     {
         $coin = $this->getCoin()[$coin_id];
-        $bitgo = new BitGoSDK(env('BITGO_ACCESS_TOKEN'), $coin['id'], true);
+        $bitgo = new BitGoSDK(env('BITGO_ACCESS_TOKEN'), $coin['id'], false);
         $bitgo->walletId = $wallet_id;
         return $bitgo->getWallet($coin_id);
     }
@@ -93,7 +93,7 @@ class WalletRepository
             $coin = $coins[$id];
             $wallet = $this->userWallet->where('user_id', Auth::id())->where('coin_id', $id)->latest('created_at')->first();
             if (!empty($wallet)) {
-                $bitgo = new BitGoSDK(env('BITGO_ACCESS_TOKEN'), $coin['id'], true);
+                $bitgo = new BitGoSDK(env('BITGO_ACCESS_TOKEN'), $coin['id'], false);
                 $bitgo->walletId = $wallet->wallet_id;
                 $wallet = $bitgo->getWallet($coin['id']);
                 return [
@@ -113,7 +113,7 @@ class WalletRepository
         if (!empty($coins[$id])) {
             $wallet = $this->userWallet->where('user_id', Auth::id())->where('coin_id', $id)->latest('created_at')->first();
             if (!empty($wallet)) {
-                $bitgo = new BitGoSDK(env('BITGO_ACCESS_TOKEN'), $coin['id'], true);
+                $bitgo = new BitGoSDK(env('BITGO_ACCESS_TOKEN'), $coin['id'], false);
                 $bitgo->walletId = $wallet->wallet_id;
                 $transactions = $bitgo->listWalletTransfers();
                 $respone = [];
