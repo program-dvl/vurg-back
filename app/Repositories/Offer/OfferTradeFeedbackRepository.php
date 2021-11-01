@@ -53,4 +53,29 @@ class OfferTradeFeedbackRepository
         return $offers;
     }
 
+    public function getTotalFedbackCount($user)
+    {
+        $getAllFeedback = OfferTradeFeedback::where("to_user", $user->id)->get();
+        $totalPositive = $totalNegative = 0;
+        if(!empty($getAllFeedback)) {
+            foreach($getAllFeedback as $feedback) {
+                if($feedback->positive == 1) {
+                    $totalPositive++;
+                } else {
+                    $totalNegative++;
+                }
+            }
+        }
+        $user->positive_feedback_count = $totalPositive;
+        $user->negative_feedback_count = $totalNegative;
+
+        return $user;
+    }
+
+    public function addOfferFeedback($dataInsert)
+    {
+        OfferTradeFeedback::insert($dataInsert);
+        return true;;
+    }
+
 }

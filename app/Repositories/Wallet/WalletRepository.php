@@ -41,8 +41,9 @@ class WalletRepository
                 $bitgo = new BitGoSDK(env('BITGO_ACCESS_TOKEN'), $coin['id'], true);
                 $bitgo->walletId = $wallet->wallet_id;
                 $wallet = $bitgo->getWallet($coin['id']);
+                $lable = explode("-",$wallet['label']);
                 $allWallets[$coin['id']] = [
-                    'walletName' => $wallet['label'],
+                    'walletName' => $lable[0],
                     'coin' => $wallet['coin'],
                     'balance' => $wallet['balance']/100000000,
                     'address' => $wallet['receiveAddress']['address']
@@ -51,6 +52,30 @@ class WalletRepository
         }
         return $allWallets;
     }
+
+    /**
+     * get user wallet by coin id.
+     *
+     * @return array
+     */
+    public function getUserWallet($user_id, $coin_id)
+    {
+        return $this->userWallet->where('user_id', $user_id)->where('coin_id', $coin_id)->latest('created_at')->first();
+    }
+
+    /**
+     * get bitgo wallet by wallet id and coin id.
+     *
+     * @return array
+     */
+    public function getBitgoWallet($wallet_id, $coin_id)
+    {
+        $coin = $this->getCoin()[$coin_id];
+        $bitgo = new BitGoSDK(env('BITGO_ACCESS_TOKEN'), $coin['id'], true);
+        $bitgo->walletId = $wallet_id;
+        return $bitgo->getWallet($coin_id);
+    }
+
 
     public function allCoins() {
         return [
@@ -96,7 +121,7 @@ class WalletRepository
                     foreach ($transactions['transfers'] as $key => $value) {
                         $respone[$key]['crypt_amount'] = $value['value']/100000000;
                         $respone[$key]['state'] = $value['state'];
-                        $respone[$key]['transaction_type'] = ($value['type'] == 'receive') ? 'Recived' : 'Sent Out';
+                        $respone[$key]['transaction_type'] = ($value['type'] == 'receive') ? 'Received' : 'Sent Out';
                         $respone[$key]['sent_to'] = $value['wallet'];
                         $respone[$key]['transaction_id'] = $value['id'];
                         $respone[$key]['date'] = $value['date'];

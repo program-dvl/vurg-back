@@ -6,16 +6,15 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
 /**
- * Class UserWallet
+ * Class UserNotifications
  * @package App\Models
  * @version July 10, 2020, 4:29 am UTC
  *
  */
-class UserWallet extends Model
+class UserNotifications extends Model
 {
-    use SoftDeletes;
 
-    public $table = 'user_wallet';
+    public $table = 'user_notifications';
 
     /**
      * The attributes that are mass assignable.
@@ -23,14 +22,15 @@ class UserWallet extends Model
      * @var array
      */
     protected $fillable = [
-        'user_id',
-        'lable',
-        'passphrase',
-        'wallet_id',
-        'coin_id',
-        'balance',
-        'locked',
+        'notification_id',
+        'notification_text',
+        'is_read',
+        'model_id',
         'created_at',
         'updated_at'
     ];
+
+    public function notifications() {
+        return $this->belongsTo('App\Models\Notifications','notification_id');
+    }
 }

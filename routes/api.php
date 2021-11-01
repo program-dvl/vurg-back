@@ -35,10 +35,10 @@ Route::get('currencies', 'App\Http\Controllers\User\CurrencyController@index');
 // Get All Countries with Phone code
 Route::get('countries', 'App\Http\Controllers\User\CountryController@index');
 
-// Get All Settings
-Route::get('settings', 'App\Http\Controllers\User\SettingsController@index');
-
 Route::middleware(['auth:api', 'lastActivity'])->group(function () {
+    // Get All Settings
+    Route::get('settings', 'App\Http\Controllers\User\SettingsController@index');
+
     // Route::get('user', 'App\Http\Controllers\User\UserController@index');
     Route::get('email/resend', 'App\Http\Controllers\Auth\VerificationController@resend')->name('verification.resend');
     Route::post('otp/send', 'App\Http\Controllers\Auth\VerificationController@sendOTP')->name('verify.otp');
@@ -70,6 +70,9 @@ Route::middleware(['auth:api', 'lastActivity'])->group(function () {
     
     // Get Payment methods
     Route::get('offer/paymentMethod', 'App\Http\Controllers\Offer\OffersController@getPaymentMethods');
+
+    // Get Offer Tags
+    Route::get('offer/tags', 'App\Http\Controllers\Offer\OffersController@getOfferTags');
     
     // View Offer
     Route::get('offer/{id}', 'App\Http\Controllers\Offer\OffersController@viewOffer');
@@ -84,8 +87,8 @@ Route::middleware(['auth:api', 'lastActivity'])->group(function () {
     // Get Feedback
     Route::post('feedback', 'App\Http\Controllers\Offer\OfferTradeFeedbackController@index');
 
-    // Get Offer Tags
-    Route::get('offer/tags', 'App\Http\Controllers\Offer\OffersController@getOfferTags');
+    // Add Feedback
+    Route::post('add/feedback', 'App\Http\Controllers\Offer\OfferTradeFeedbackController@addFeedback');
 
     // Get user wallets
     Route::get('wallets', 'App\Http\Controllers\Wallet\WalletController@index');
@@ -101,7 +104,27 @@ Route::middleware(['auth:api', 'lastActivity'])->group(function () {
 
     Route::get('transactions/{coinId}', 'App\Http\Controllers\Wallet\WalletController@getTransactions');
 
-    // Route::post('trade', 'App\Http\Controllers\Trade\TradeController@start');
+    Route::post('trade', 'App\Http\Controllers\Trade\TradeController@createTrade');
+    Route::get('trade/{tradeId}/cancel', 'App\Http\Controllers\Trade\TradeController@cancelTrade');
+    Route::get('trade/{tradeId}/accept', 'App\Http\Controllers\Trade\TradeController@acceptPayment');
+    Route::get('trade/{tradeId}/receive', 'App\Http\Controllers\Trade\TradeController@receivePayment');
+    Route::get('trade/{tradeId}', 'App\Http\Controllers\Trade\TradeController@tradeDetails');
+
+    Route::post('pre-transaction-details', 'App\Http\Controllers\Transaction\TransactionController@getPreTransactionDetails');
+    Route::post('convert-currency', 'App\Http\Controllers\Transaction\TransactionController@getConvertedCurrency');
+    Route::post('send-coin', 'App\Http\Controllers\Transaction\TransactionController@sendCointoAddress');
+
+
+    //Get Notification UnreadCount
+    Route::get('notification/unread-count', 'App\Http\Controllers\Notification\NotificationController@getUnreadNotificationCount');
+
+    //Get All Notifications
+    Route::post('get/notification', 'App\Http\Controllers\Notification\NotificationController@getAllNotifications');
+
+    //Make All notifications to read
+    Route::get('notification/mark-as-read', 'App\Http\Controllers\Notification\NotificationController@markAsReadNotifications');
+
+    Route::post('trade-history', 'App\Http\Controllers\Trade\TradeController@tradeHistory');
     
 });
 Route::get('express', 'App\Http\Controllers\User\UserController@express');

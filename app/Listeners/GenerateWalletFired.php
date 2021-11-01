@@ -47,9 +47,10 @@ class GenerateWalletFired
         $userId = $user->id;
         $coin = CurrencyCode::BITCOIN;
         $passPharse = rand();
+        $lableName = 'Bitcoin-'.$userId;
         $bitgoExpress = new BitGoExpress($this->hostname, $this->port, $coin);
         $bitgoExpress->accessToken = env('BITGO_ACCESS_TOKEN');
-        $wallet = $bitgoExpress->generateWallet('Bitcoin', $passPharse);
+        $wallet = $bitgoExpress->generateWallet($lableName, $passPharse);
         $walletData = [
             'user_id' => $userId,
             'coin_id' => self::BITCOIN_ID,

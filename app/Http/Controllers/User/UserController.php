@@ -5,6 +5,7 @@ namespace App\Http\Controllers\User;
 use App\Helpers\ResponseHelper;
 use App\Http\Controllers\Controller;
 use App\Repositories\User\UserRepository;
+use App\Repositories\Offer\OfferTradeFeedbackRepository;
 use Illuminate\Auth\Events\Registered;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
@@ -49,11 +50,13 @@ class UserController extends Controller
     public function __construct(
         Request $request,
         ResponseHelper $responseHelper,
-        UserRepository $userRepository
+        UserRepository $userRepository,
+        OfferTradeFeedbackRepository $offerTradeFeedbackRepository
     ) {
         $this->request = $request;
         $this->responseHelper = $responseHelper;
         $this->userRepository = $userRepository;
+        $this->offerTradeFeedbackRepository = $offerTradeFeedbackRepository;
     }
 
     
@@ -176,16 +179,6 @@ class UserController extends Controller
     public function updateProfile(Request $request)
     {
         try {
-            $validator = Validator::make($request->all(), [
-                'display_name' => 'required',
-                'preferred_currency' => 'required',
-                'user_timezone' => 'required',
-            ]);
-
-            if ($validator->fails()) {
-                return $this->sendValidationError($validator->messages());
-            }
-
             $input = $request->all();
             $userDetails = User::find(Auth::id());
 
@@ -228,6 +221,8 @@ class UserController extends Controller
         try {
             $userId = !empty($userId) ? $userId : Auth::id();
             $user = $this->userRepository->userDetailsForProfile($userId);
+
+            $user = $this->offerTradeFeedbackRepository->getTotalFedbackCount($user);
             return $this->sendSuccess($user, 'Profile fetched sucessfully');
         } catch (\Exception $e) {
             dd($e->getMessage());

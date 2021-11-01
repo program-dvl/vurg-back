@@ -25,6 +25,9 @@
     },
     {
       "name": "Offer Listing"
+    },
+    {
+      "name": "User Notifications"
     }
   ],
   "paths":{
@@ -763,6 +766,62 @@
         }
       }
     },
+    "/add/feedback": {
+      "post": {
+        "operationId": "POST-add-user-feedback",
+        "summary": "Add user's feedback",
+        "tags": [
+          "User Profile"
+        ],
+        "consumes": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "type": "object",
+              "properties": {
+                "offer_id": {
+                  "type": "integer",
+                  "example": "1"
+                },
+                "user_id": {
+                  "type": "integer",
+                  "example": "2",
+                  "description": "User id"
+                },
+                "positive": {
+                  "type": "integer",
+                  "example": "1",
+                  "description": "1: positive, 0:nothing"
+                },
+                "negative": {
+                  "type": "integer",
+                  "example": "1",
+                  "description": "1: negative, 0:nothing"
+                },
+                "comment": {
+                  "type": "string",
+                  "example": "Awesome",
+                  "description": "(Optional) - if user add comment"
+                }
+              }
+            }
+          }
+        ],
+        "responses": {
+          "400": {
+            "description": "Bad Request"
+          },
+          "422": {
+            "description": "Invalid input"
+          }
+        }
+      }
+    },
     "/offer/tags": {
       "get": {
         "operationId": "GET-offer-tags",
@@ -1335,6 +1394,94 @@
         }
       }
     },
+    "/trade": {
+      "post": {
+        "operationId": "POST-start-trade-api",
+        "summary": "POST Start trade API",
+        "tags": [
+          "Trade"
+        ],
+        "consumes": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "type": "object",
+              "properties": {
+                "offer_id": {
+                  "type": "integer",
+                  "example": "1"
+                },
+                "amount": {
+                  "type": "integer",
+                  "example": "1"
+                }                  
+              }
+            }
+          }
+        ],
+        "responses": {
+          "400": {
+            "description": "Bad Request"
+          }
+        }
+      }
+    },
+    "/trade/{tradeId}/cancel": {
+      "get": {
+        "operationId": "GET-cancel-trade-api",
+        "summary": "Cancel trade API",
+        "tags": [
+          "Trade"
+        ],
+        "consumes": [
+          "application/json"
+        ],
+        "responses": {
+          "400": {
+            "description": "Bad Request"
+          }
+        }
+      }
+    },
+    "/trade/{tradeId}/accept": {
+      "get": {
+        "operationId": "GET-accept-trade-api",
+        "summary": "When seller confirm the payment received ( when seller click on received button )",
+        "tags": [
+          "Trade"
+        ],
+        "consumes": [
+          "application/json"
+        ],
+        "responses": {
+          "400": {
+            "description": "Bad Request"
+          }
+        }
+      }
+    },
+    "/trade/{tradeId}/receive": {
+      "get": {
+        "operationId": "GET-receive-trade-api",
+        "summary": "When buyer confirm the payment sent ( when buyer click on paid button )",
+        "tags": [
+          "Trade"
+        ],
+        "consumes": [
+          "application/json"
+        ],
+        "responses": {
+          "400": {
+            "description": "Bad Request"
+          }
+        }
+      }
+    },
     "/offer/remove/favourite": {
       "post": {
         "operationId": "GET-offer-remove-from-favourite",
@@ -1360,6 +1507,283 @@
               }
             }
           }
+        ],
+        "responses": {
+          "400": {
+            "description": "Bad Request"
+          }
+        }
+      }
+    },
+    "/convert-currency": {
+      "post": {
+        "operationId": "POST-Currency-convert",
+        "summary": "COnvert any currency like USD to BTC or BTC to USD",
+        "tags": [
+          "Wallet Transactions"
+        ],
+        "consumes": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "type": "object",
+              "properties": {
+                "amount": {
+                  "type": "integer",
+                  "example": "1"
+                },
+                "from": {
+                  "type": "string",
+                  "example": "BTC"
+                },
+                "to": {
+                  "type": "string",
+                  "example": "USD"
+                }                
+              }
+            }
+          }
+        ],
+        "responses": {
+          "400": {
+            "description": "Bad Request"
+          }
+        }
+      }
+    },
+    "/pre-transaction-details": {
+      "post": {
+        "operationId": "POST-get-pre-trasaction-details",
+        "summary": "Get transactions details before sending it to address",
+        "tags": [
+          "Wallet Transactions"
+        ],
+        "consumes": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "type": "object",
+              "properties": {
+                "amount": {
+                  "type": "integer",
+                  "example": "1"
+                },
+                "address": {
+                  "type": "string",
+                  "example": "3ELcfEYHWijLR8U331uX3AD53frHGPjSo2"
+                }                
+              }
+            }
+          }
+        ],
+        "responses": {
+          "400": {
+            "description": "Bad Request"
+          }
+        }
+      }
+    },
+    "/send-coin": {
+      "post": {
+        "operationId": "POST-send-coin-to-wallet-address",
+        "summary": "Send coins to other wallet address",
+        "tags": [
+          "Wallet Transactions"
+        ],
+        "consumes": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "type": "object",
+              "properties": {
+                "amount": {
+                  "type": "integer",
+                  "example": "1"
+                },
+                "feeAmount": {
+                  "type": "integer",
+                  "example": "1"
+                },
+                "address": {
+                  "type": "string",
+                  "example": "3ELcfEYHWijLR8U331uX3AD53frHGPjSo2"
+                },
+                "password": {
+                  "type": "string",
+                  "example": "testPassword"
+                }                
+              }
+            }
+          }
+        ],
+        "responses": {
+          "400": {
+            "description": "Bad Request"
+          }
+        }
+      }
+    },
+    "/notification/unread-count": {
+      "get": {
+        "operationId": "GET-notification-unread-count",
+        "summary": "Get Unread Notification Count",
+        "tags": [
+          "User Notifications"
+        ],
+        "consumes": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "name": "Authorization",
+            "in": "header",
+            "required": true,
+            "type": "string",
+            "default": ""
+          }
+        ],
+        "responses": {
+          "400": {
+            "description": "Bad Request"
+          }
+        }
+      }
+    },
+    "/notification/mark-as-read": {
+      "get": {
+        "operationId": "GET-notification-mark-as-read",
+        "summary": "Set All Notifications Marks as Read",
+        "tags": [
+          "User Notifications"
+        ],
+        "consumes": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "name": "Authorization",
+            "in": "header",
+            "required": true,
+            "type": "string",
+            "default": ""
+          }
+        ],
+        "responses": {
+          "400": {
+            "description": "Bad Request"
+          }
+        }
+      }
+    },
+    "/get/notification": {
+      "post": {
+        "operationId": "POST-get-all-notifications",
+        "summary": "Get All Notifications of Logged In User",
+        "tags": [
+          "User Notifications"
+        ],
+        "consumes": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "type": "object",
+              "properties": {
+                "per_page": {
+                  "type": "integer",
+                  "example": "10"
+                },
+                "page_number": {
+                  "type": "integer",
+                  "example": "1"
+                }
+              }
+            }
+          }
+        ],
+        "responses": {
+          "400": {
+            "description": "Bad Request"
+          },
+          "422": {
+            "description": "Invalid input"
+          }
+        }
+      }
+    },
+    "/trade-history": {
+      "post": {
+        "operationId": "POST-trade-history",
+        "summary": "Trade history",
+        "tags": [
+          "Trade"
+        ],
+        "consumes": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "type": "object",
+              "properties": {
+                "trade_type": {
+                  "type": "string",
+                  "example": "buy or sell"
+                },
+                "start_date": {
+                  "type": "string",
+                  "example": "2021-08-05"
+                },
+                "end_date": {
+                  "type": "string",
+                  "example": "2021-11-05"
+                },
+                "payment_method": {
+                  "type": "string",
+                  "example": "8"
+                }                
+              }
+            }
+          }
+        ],
+        "responses": {
+          "400": {
+            "description": "Bad Request"
+          }
+        }
+      }
+    },
+    "/trade/{tradeId}": {
+      "get": {
+        "operationId": "GET-trade-detail-api",
+        "summary": "GET Trade detail",
+        "tags": [
+          "Trade"
+        ],
+        "consumes": [
+          "application/json"
         ],
         "responses": {
           "400": {
