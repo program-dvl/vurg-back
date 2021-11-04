@@ -37,11 +37,11 @@ class TransactionController extends Controller
             }
 
             $isValidAddress = AddressValidator::isValid($request->address);
-            // if (!$isValidAddress) {
-            //     $apiStatus = Response::HTTP_UNPROCESSABLE_ENTITY;
-            //     $apiMessage = 'Invalid wallet address';
-            //     return $this->sendError($apiMessage, $apiStatus);
-            // }
+            if (!$isValidAddress) {
+                $apiStatus = Response::HTTP_UNPROCESSABLE_ENTITY;
+                $apiMessage = 'Invalid wallet address';
+                return $this->sendError($apiMessage, $apiStatus);
+            }
             
             $isSufficientFunds = $this->transactionRepository->isHavingSufficientFunds($request->amount);
             if (!$isSufficientFunds) {
